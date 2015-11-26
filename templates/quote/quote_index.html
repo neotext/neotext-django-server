@@ -1,0 +1,21 @@
+<h1>Quote</h1>
+
+{% ifequal request_type.source "citing"%}
+	<p><a href="?source=cited">Citing Text</a> | <b>Cited Text</b></p>
+	{{quote.quote_prev}}
+
+{% else %}
+	<p><b>Citing Text</b> | <a href="?source=citing">Cited Text</a></p>
+	{{quote.cite_prev}}
+{% endifequal %}
+
+<blockquote><b>{{quote.quote}}</b></blockquote>
+
+{% ifequal request_type.source "citing"%}
+	{{quote.quote_next}}
+
+{% else %}
+	{{quote.cite_next}}
+{% endifequal %}
+
+<p><a href="{{quote.cite_url}}">Cited By</a> | <a href="{{quote.quote_url}}">Cited Source</a></p>

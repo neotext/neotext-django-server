@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8" />
+<title>neotext | demo : bringing context to the web –</title><meta name="robots" content="noodp,noydir" />
+
+
+<link rel='stylesheet' id='child-theme-css'  href='http://www.openpolitics.com/wp-content/themes/genesis/style.css?ver=2.1.2' type='text/css' media='all' />
+
+<link rel="stylesheet" type="text/css" href="http://www.openpolitics.com/wp-content/themes/genesis/custom.css" media="all" />
+<link rel="stylesheet" type="text/css" href="http://www.openpolitics.com/wp-content/themes/genesis/small.css" media="only screen and (max-width: 480px), only screen and (max-device-width: 480px)" />
+<link rel="stylesheet" type="text/css" href="http://www.openpolitics.com/wp-content/themes/genesis/large.css" media="only screen and (max-width: 700px), only screen and (max-device-width: 700px)" />
+
+<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+<style type="text/css"></style><style type="text/css" media="print">#wpadminbar { display:none; }</style>
+<style type="text/css" media="screen">
+	html { margin-top: 32px !important; }
+	* html body { margin-top: 32px !important; }
+	@media screen and ( max-width: 782px ) {
+		html { margin-top: 46px !important; }
+		* html body { margin-top: 46px !important; }
+	}
+	
+	span.blockquote {
+		color: #555;
+	}
+	
+	div.quote_arrows a, q, q a, span.q  {
+		color: #be1e2d;						/* maroon: Credit: http://meta.stackoverflow.com */
+	}
+	
+	q, q a, span.q {
+		border-bottom: 1px dotted #444;		/* maroon: Credit: http://meta.stackoverflow.com */
+	}
+	
+	
+	/* JQUERY DEMO STYLE */
+	div#demo_content {
+		background-color: #eee;
+		border: 1px solid #777;
+	}
+	
+	.ui-draggable .ui-dialog-titlebar {
+		font-size: 14px;
+		font-weight: 0;
+	}
+
+	.ui-dialog-content {
+		font-size: 14px;
+		color: red;
+	}
+	
+	/* Position Demo */
+	.positionDiv {
+    position: absolute;
+    width: 75px;
+    height: 75px;
+    background: #080;
+  }
+	
+	
+</style>
+
+<!-- Quote-Context -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
+
+<script type="text/javascript" src="http://www.openpolitics.com/neotext/lib/highslide/highslide-full.js"></script>
+<link rel="stylesheet" type="text/css" href="http://www.openpolitics.com/neotext/lib/highslide/highslide.css" >
+
+<link rel='stylesheet' href='http://www.openpolitics.com/neotext/css/quote-context-style.css' type='text/css' media='all' />
+<script type='text/javascript' src='http://www.openpolitics.com/demo/js/quote-context.js'>
+<!--script type='text/javascript' src='/static/js/quote-context.js'-->
+<script type="text/javascript"></script>
+
+<!--- If using optional highslide plugin -->
+<script type="text/javascript">
+	var popup_library = 'jQuery'; // highslide/jQuery
+	hs.graphicsDir = 'http://www.openpolitics.com/neotext/lib/highslide/graphics/';
+	hs.outlineType = 'rounded-white';
+	hs.wrapperClassName = 'draggable-header';
+	hs.preserveContent = false;
+
+	// close on mouse out
+	hs.Expander.prototype.onMouseOut = function (sender) {
+	   sender.close();
+	};
+	// close if mouse is not over on expand (using the internal mouseIsOver property)
+	hs.Expander.prototype.onAfterExpand = function (sender) {
+	   if (!sender.mouseIsOver) sender.close();
+	};
+</script>
+
+</head>
+<body class="home blog logged-in admin-bar no-customize-support content-sidebar inline-comments" itemscope="itemscope" itemtype="http://schema.org/WebPage">
+	
+<div class="site-container">
+	<header class="site-header" role="banner" itemscope="itemscope" itemtype="http://schema.org/WPHeader">
+		<div class="wrap"><div class="title-area"><h1 class="site-title" itemprop="headline"><a href="http://www.openpolitics.com/">neotext.net</a></h1></div><aside class="widget-area header-widget-area"><section id="search-6" class="widget widget_search">
+		<div class="widget-wrap"><!--form method="get" class="search-form" action="http://www.openpolitics.com/" role="search"><input type="search" name="s" placeholder="Search this website&#x2026;" /><input type="submit" value="Search" /></form--></div></section></aside>
+		</div>
+	</header>
+	<nav class="nav-primary" role="navigation" itemscope="itemscope" itemtype="http://schema.org/SiteNavigationElement">
+	<div class="wrap">
+		<ul id="menu-nav_top" class="menu genesis-nav-menu menu-primary">
+			<li id="menu-item-4373" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-4373"><a href="/">home</a></li>
+			<li id="menu-item-4311" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-4311"><a href="`demo/">demo</a></li>
+			<li id="menu-item-2069" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-2069"><a href="code">code</a></li>
+			<li id="menu-item-4317" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-4317"><a href="wordpress-plugin/">wordpress plugin</a>
+			</li>
+			<li id="menu-item-4310" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4310"><a href="http://www.openpolitics.com/about/">about</a></li>
+		</ul>
+	</div>
+	</nav>
+	<div class="site-inner">
+		<div class="content-sidebar-wrap">
+			<main class="content" role="main" itemprop="mainContentOfPage" itemscope="itemscope" itemtype="http://schema.org/Blog">
+			<article class="post-2355 post type-post status-publish format-standard category-writing tag-bible tag-religion entry" itemscope="itemscope" itemtype="http://schema.org/BlogPosting" itemprop="blogPost"><header class="entry-header">
+<script type="text/javascript" src="http://www.openpolitics.com/neotext/lib/jquery.md5.js"></script>
+
+<h2 class="entry-title"><a href="../">Adding Quote-Context using jQuery</a></h2>
+
+<p>HTML Offers two tags, for use when quoting text: &lt;q&gt;, and &lt;blockquote&gt;</p>
+
+<p>What most people are unaware of, is that these tags also contain a <b>"cite"</b> attribute:</p>
+
+<blockquote>&lt;<b>q cite</b>="http://www.washingtonpost.com/blogs/fact-checker/.."><span class="q">I took the initiative in creating the internet.</span><b>&lt;/q&gt;</b></blockquote>
+<blockquote>&lt;<b>blockquote cite</b>="http://www.biblegateway.com/passage/%3fsearch=Deuteronomy+8.html"&gt;<span class="blockquote">one does not live by bread alone, but by every word that comes from the mouth of the Lord</span><b>&lt;/blockquote&gt;</b></blockquote>
+<br />
+<p>The "q" tag is for text within a paragraph (inline).  The "blockquote" tag is used for a quote that is broken out into its own separate paragraph.</p>
+
+<p>Below are examples of how each of <b>these tags may be extended with javascript</b> and a server-side script to lookup the original source and <b>to provide additional context</b> to the quote:</p>
+
+<h3>Examples</h3>
+
+<h4>1. Inline quotation</h4>
+<p><strong>A. So did Al Gore really claim to have invented the internet?</strong><br />(Hover over the <span class="q">red</span> inline-quote below to expand.)</p>
+
+<p>The meme originated from an interview Gore did on March 8, 1999 with CNN’s Wolf Blitzer.  The quote in question is: <q cite="http://www.washingtonpost.com/blogs/fact-checker/wp/2013/11/04/a-cautionary-tale-for-politicians-al-gore-and-the-invention-of-the-internet/">I took the initiative in creating the Internet.</q> Granted, Gore's response was self-serving, and poorly phrased, but it was off the cuff; and if you look at the context, he wasn't claiming to have invented the internet.  Rather, he was alluding to the fact that while he was a congressman, he was the prime sponsor of the 1991 "<a href="http://en.wikipedia.org/wiki/High_Performance_Computing_Act_of_1991">High-Performance Computing and Communications Act</a>", which, among other things, paid for Netscape founder Marc Andreessen to create the Mosaic browser, which became Netscape, and then eventually re-emerged as Firefox.</p>
+
+
+<p><strong>B. Is money the root of all evil?</strong></p>
+<p>You may have heard the saying that <q cite="https://www.biblegateway.com/passage/?search=1%20Timothy%206&version=KJV">money is the root of all evil</q>. If a citation is requested, 1 Timothy 6:10 (KJV) may be provided.  The actual text is similar, but the subject of the sentence is different.</p> 
+
+<!--
+<h4>2 Blockquote Example:</h4>
+
+<p>An alternative to popup windows can be used to expand exteded quotations.  
+	<strong>Click on the arrows</strong> to expand the quote of <a href="https://www.biblegateway.com/passage/?search=Deuteronomy+8&amp;version=NRSV" target="_blank">Deuteronomy 8</a> that Jesus recites: 
+	
+<h5><a href="https://www.biblegateway.com/passage/?search=Matthew+4%3A+1-11&version=NRSV" target="_blank">Matthew 4:3-4</a></h5></p>
+
+"The tempter came and said to him, “If you are the Son of God, command these stones to become loaves of bread.” 4 But he answered, “It is written,"
+ 
+<blockquote cite="https://www.biblegateway.com/passage/?search=Deuteronomy+8&amp;version=NRSV">one does not live by bread alone, but by every word that comes from the mouth of the Lord</blockquote>
+-->
+
+<p><strong>C. Why hast though forsaken me:</strong></p>
+<p>Have you ever wondered why Jesus cried out:</p>
+	
+<blockquote cite="https://www.biblegateway.com/passage/?search=Matthew+4%3A27&version=NIV">45 From noon on, darkness came over the whole land[p] until three in the afternoon. 46 And about three o’clock Jesus cried with a loud voice, “Eli, Eli, lema sabachthani?” that is, <q cite="https://www.biblegateway.com/passage/?search=Psalm+22&version=NIV">My God, my God, why have you forsaken me?</q></blockquote>
+
+<!--
+"5 Then the devil took him to the holy city and placed him on the pinnacle of the temple, 6 saying to him, “If you are the Son of God, throw yourself down; for it is written,
+<blockquote>‘He <q cite="https://www.biblegateway.com/passage/?search=Psalm%2091&version=NRSV">will command his angels concerning you</q>,’
+	and ‘<q cite="https://www.biblegateway.com/passage/?search=Psalm%2091&version=NRSV">On their hands they will bear you up, so that you will not dash your foot against a stone</q>.’”
+</blockquote>
+7 Jesus said to him, “Again it is written, ‘<q cite="https://www.biblegateway.com/passage/?search=Deuteronomy%206&version=NRSV">Do not put the Lord  your God to the test</q>’”
+
+
+
+
+<br /><br />
+<h3>Limitations</h3>
+<p>(Note that I haven't quite got the user interface right when the linking gets crowded -- the popups get unwieldy. 
+	One way to solve this would be to make the links only popup when they are clicked on.)
+
+
+
+<h4>2. Blockquote</h4>
+<p>The second type of quotation involves an entire block of text, that is separated from other paragraphs.  The below example allows the text to be expanded without a popup:</p>
+		<p><strong>Click on the arrows</strong> to expand the <strong>blockquote</strong>:</p>
+
+-->
+
+
+
+<!--
+<br /><br />
+<h4><a href="https://www.biblegateway.com/passage/?search=Matthew+4%3A+1-11&version=NRSV" target="_blank">Matthew 4:3-7</a></h4>
+The tempter came and said to him, “If you are the Son of God, command these stones to become loaves of bread.” 4 But he answered, It is written, <q cite="https://www.biblegateway.com/passage/?search=Deuteronomy%208&version=NRSV">one does not live by bread alone, but by every word that comes from the mouth of</q> God.”   5 Then the devil took him to the holy city and placed him on the pinnacle of the temple,   6 saying to him, “If you are the Son of God, throw yourself down; for it is written, ‘He <q cite="https://www.biblegateway.com/passage/?search=Psalm%2091&version=NRSV">will command his angels concerning you</q>,’ 
+	     and ‘On their hands they will bear you up,  
+		so that you will not dash your foot against a stone.’”  7 Jesus said to him, “Again it is written, ‘<q cite="https://www.biblegateway.com/passage/?search=Deuteronomy%206&version=NRSV">Do not put the Lord  your God to the test</q>.’”
+
+<br />
+
+<h3>Example for Gerry:</h3>
+
+<p>EMU's alumni newsletter profiled Gerry and Kyle Horst.  Kyle said, about joining the family business:</p>
+<blockquote cite="http://emu.edu/now/crossroads/2013/05/13/third-generation-joins-horst-son/">When I left KPMG I was a manager, putting in a lot of hours,” says Kyle. “I wanted to be around when Avery was growing up. I didn’t want to sell my soul to the company.</blockquote>
+
+<p>In commenting about the changing business conditions, Gerry Horst said: <q cite="http://emu.edu/now/crossroads/2013/05/13/third-generation-joins-horst-son/">Before banks begged me to take money, and now we have to prove that we don’t need it</q>.</p>
+<br /><br />
+-->
+
+<h3>Code</h3>
+<script src="https://gist.github.com/timlangeman/e7629d5893168ab13222.js"></script>
+
+The jQuery plugin I created: <a href="https://github.com/timlangeman/quote-context/blob/master/js/quote-context.js">quoteContext</a>
+
+
+<script type="text/javascript"> 
+	// Call plugin on all blockquotes:
+	jQuery( "q, blockquote").quoteContext(); 
+
+</script>
+<div id="quotify_content">
+	
+</div>
+
+
+</main><aside class="sidebar sidebar-primary widget-area" role="complementary" itemscope="itemscope" itemtype="http://schema.org/WPSideBar"><section id="side-matter-4" class="widget widget_side_matter side-matter"><div class="widget-wrap"><h4 class="widget-title widgettitle">Notes:</h4>
+			<ol id="sidenote_list" class='side-matter side-matter-list' style='list-style-type: decimal;'>
+				<li id='note-1' class='side-matter side-matter-note'>
+						<div class='side-matter side-matter-text'>
+						<p>The original version of this ad featured a song from the Rolling Stones – “<a href="http://en.wikipedia.org/wiki/Sympathy_for_the_Devil">Sympathy for the Devil</a>”, a first-person account of the devil at work throughout history (<a href="https://www.youtube.com/watch?v=ZRXGsPBUV5g">video</a>)</p>
+					</div>
+				</li>
+
+				<li id='note-2' class='side-matter side-matter-note'>
+						
+						<div class='side-matter side-matter-text'>
+						<p>One interesting tidbit: <a href="http://www.imdb.com/name/nm0000353/?ref_=tt_cl_t1">Willem Dafoe</a>, the actor who plays Satan in this ad, also played Jesus in Martin Scorsese&#8217;s film, <a href="http://www.imdb.com/title/tt0095497/?ref_=nm_flmg_act_89">The Last Temptation of Christ</a></p>
+
+					</div>
+				</li>
+
+				<li id='note-3' class='side-matter side-matter-note'>
+						
+						<div id="expand_top-3">
+						8:1 This entire commandment that I command you today you must diligently observe, so that you may live and increase, and go in and occupy the land that the Lord promised on oath to your ancestors. </div>
+						<div id="expand_top_label-3" class="expand_label"><a href="#">context + </a></div> 		
+						<div class='side-matter side-matter-text'>
+
+						<p><a href="https://www.biblegateway.com/passage/?search=Deuteronomy+8:3">Deuteronomy 8</a>:<br />
+<sup>2</sup> Remember the long way that the Lord your God has led you these forty years in the wilderness, in order to humble you, testing you to know what was in your heart, whether or not you would keep his commandments. <sup>3</sup> He humbled you by letting you hunger, then by feeding you with manna, with which neither you nor your ancestors were acquainted, in order to make you understand that <strong>one does not live by bread alone, but by every word that comes from the mouth of the Lord</strong>. <sup>4</sup> The clothes on your back did not wear out and your feet did not swell these forty years.</p>
+						<div id="expand_bottom_label-3" class="expand_label"><a href="">context + </a></div> 
+
+		
+<div id="expand_bottom-3">
+<!--	
+5 Know then in your heart that as a parent disciplines a child so the Lord your God disciplines you. 6 Therefore keep the commandments of the Lord your God, by walking in his ways and by fearing him. 7 For the Lord your God is bringing you into a good land, a land with flowing streams, with springs and underground waters welling up in valleys and hills, 8 a land of wheat and barley, of vines and fig trees and pomegranates, a land of olive trees and honey, 9 a land where you may eat bread without scarcity, where you will lack nothing, a land whose stones are iron and from whose hills you may mine copper. 10 You shall eat your fill and bless the Lord your God for the good land that he has given you.
+
+11 Take care that you do not forget the Lord your God, by failing to keep his commandments, his ordinances, and his statutes, which I am commanding you today. 12 When you have eaten your fill and have built fine houses and live in them, 13 and when your herds and flocks have multiplied, and your silver and gold is multiplied, and all that you have is multiplied, 14 then do not exalt yourself, forgetting the Lord your God, who brought you out of the land of Egypt, out of the house of slavery, 15 who led you through the great and terrible wilderness, an arid wasteland with poisonous[b] snakes and scorpions. He made water flow for you from flint rock, 16 and fed you in the wilderness with manna that your ancestors did not know, to humble you and to test you, and in the end to do you good. 17 Do not say to yourself, “My power and the might of my own hand have gotten me this wealth.” 18 But remember the Lord your God, for it is he who gives you power to get wealth, so that he may confirm his covenant that he swore to your ancestors, as he is doing today.
+-->
+</div>
+					</div>
+				</li>
+								<li id='note-4' class='side-matter side-matter-note'>
+						
+						<div class='side-matter side-matter-text'>
+						<p><a href="https://www.biblegateway.com/passage/?search=Psalm%2091">Psalm 91</a>:<br />
+<sup>9</sup> Because you have made the Lord your refuge,<br />
+    the Most High your dwelling place,<br />
+<sup>10</sup> no evil shall befall you,<br />
+    no scourge come near your tent.<br />
+<sup>11</sup> <strong>For he will command his angels concerning you<br />
+    to guard you in all your ways.<br />
+<sup>12</sup> On their hands they will bear you up,<br />
+    so that you will not dash your foot against a stone.</strong><br />
+<sup>13</sup> You will tread on the lion and the adder,<br />
+    the young lion and the serpent you will trample under foot.</p>
+						<div id="expand_bottom_label-4" class="expand_label"><a href="">context + </a></div> 
+
+					</div>
+				</li>
+								<li id='note-5' class='side-matter side-matter-note'>
+						
+						<div class='side-matter side-matter-text'>
+						<p><a href="https://www.biblegateway.com/passage/?search=Deuteronomy+6%3A16&amp;version=NRSV">Deuteronomy 6</a>:<br />
+<sup>14</sup>Do not follow other gods, any of the gods of the peoples who are all around you, <sup>15</sup> because the Lord your God, who is present with you, is a jealous God. The anger of the Lord your God would be kindled against you and he would destroy you from the face of the earth. <sup>16</sup><strong>Do not put the Lord your God to the test</strong>, as you tested him at Massah. <sup>17</sup> You must diligently keep the commandments of the Lord your God, and his decrees, and his statutes that he has commanded you. <sup>18</sup> Do what is right and good in the sight of the Lord, so that it may go well with you, and so that you may go in and occupy the good land that the Lord swore to your ancestors to give you, <sup>19</sup> thrusting out all your enemies from before you, as the Lord has promised.</p>
+						<div id="expand_bottom_label-5" class="expand_label"><a href="">context + </a></div> 
+
+					</div>
+				</li>
+							</ol>
+			</div></section>
+</div>
+
+</body>
+</html>
