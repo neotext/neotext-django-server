@@ -1,8 +1,5 @@
-
 ####################### Recommended .gitignore: #####################
 # http://stackoverflow.com/questions/3719243/recommended-gitignore-file-for-python-projects
-
-settings.py  # machine-specific
 
 #Byte-compiled / optimized / DLL files
 __pycache__/
@@ -22,3 +19,13 @@ coverage.xml
 # Django stuff:
 *.log
 *.pot
+
+# Directories
+/static	
+
+# machine-specific setting
+settings.py 
+
+
+ 
+
