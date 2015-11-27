@@ -1,33 +1,13 @@
 
-settings.py  # machine-specific
-
-
 ####################### Recommended .gitignore: #####################
 # http://stackoverflow.com/questions/3719243/recommended-gitignore-file-for-python-projects
+
+settings.py  # machine-specific
 
 #Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 
-# C extensions
-*.so
-
-# Distribution / packaging
-bin/
-build/
-develop-eggs/
-dist/
-eggs/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
 
 # Unit test / coverage reports
 .tox/
@@ -39,3 +19,6 @@ coverage.xml
 # Translations
 *.mo
 
+# Django stuff:
+*.log
+*.pot
