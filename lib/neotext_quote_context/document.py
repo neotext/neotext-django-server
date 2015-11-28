@@ -15,6 +15,7 @@ __author__ = 'timlangeman@gmail.com (Tim Langeman)'
  
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
+from functools import lru_cache
 import re
 #import magic	# https://github.com/ahupp/python-magic
 
@@ -39,6 +40,7 @@ class Document:
     #return doc_type
     return 'html'  #hardcode to html for now
 
+  @lru_cache(maxsize=32)
   def raw(self):	
     raw = urlopen(self.url ).read()
     logger.debug('Downloading ' + self.url)
@@ -50,6 +52,7 @@ class Document:
         html = self.raw()
     return html
 
+  @lru_cache(maxsize=32)
   def text(self):
     """convert html to plaintext"""
     text = ''

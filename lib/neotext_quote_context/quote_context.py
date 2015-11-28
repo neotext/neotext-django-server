@@ -13,7 +13,7 @@
 __author__ = 'timlangeman@gmail.com (Tim Langeman)'
 
 from neotext.lib.google_diff_match_patch.diff_match_patch import diff_match_patch
-
+from functools import lru_cache
 
 class QuoteContext:
   """ Locates a quote from within a text, returns context
@@ -66,6 +66,7 @@ class QuoteContext:
     )
     return quote_start_position
 
+  @lru_cache(maxsize=32)
   def data(self):
     quote_start_position = self.quote_start_position()
     quote_end_position = quote_start_position + self.quote_length()

@@ -15,10 +15,12 @@ __author__ = 'timlangeman@gmail.com (Tim Langeman)'
 from neotext.lib.neotext_quote_context.quote_context import QuoteContext
 from neotext.lib.neotext_quote_context.document import Document
 from django.utils.encoding import smart_str
+from functools import lru_cache
 import hashlib, urllib
 import json
 import time
 import decimal
+
 	
 HASH_ALGORITHM='sha1'
 """ algorithm used to generate hash key: ('sha1','md5','sha256')
@@ -76,6 +78,7 @@ class Quote:
     data_dict = self.dict(all_fields)
     return json.dumps(data_dict)
 
+  @lru_cache(maxsize=32)
   def dict(self, all_fields=True):
     data_dict = {
         HASH_ALGORITHM : self.hash(),
