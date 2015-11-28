@@ -159,6 +159,12 @@ class Quote(models.Model):
 		auto_now_add=True, 
 		help_text='Date quote record created'
   )
+  create_elapsed_time = models.DecimalField(
+		null=True, blank=True,
+		max_digits = 9,
+		decimal_places = 5,
+		help_text='Elapsed time taken to compute neotext record, excluding time to save to db'
+  )
 
   app_label = "neotext"
 

@@ -18,6 +18,10 @@ from urllib.request import urlopen
 import re
 #import magic	# https://github.com/ahupp/python-magic
 
+import logging
+logger = logging.getLogger(__name__)
+
+
 class Document:
   """ Looks up url and computes plain-text version of document
 
@@ -37,6 +41,7 @@ class Document:
 
   def raw(self):	
     raw = urlopen(self.url ).read()
+    logger.debug('Downloading ' + self.url)
     return raw.decode('utf-8')
 	
   def html(self):

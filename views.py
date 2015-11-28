@@ -75,6 +75,7 @@ def quote_index_json(request, sha1=None):
     Reads should be done from amazon S3: 
     Example:  http://read.neotext.net/quote/sha1/sha1_hash
     """
+    ACCEPT_READ_REQUESTS = True
     FILESYSTEM_PATH = "/home/neotext/webapps/neotext_static/quote/sha1/"
 	
     data_dict = {}  # quote context data
@@ -107,6 +108,7 @@ def quote_index_json(request, sha1=None):
         #Create Quote Record, By Downloading cited URL
         q = QuoteLookup(citing_quote, citing_url, cited_url)
         data_dict = q.dict()
+        create_elapsed_time = data_dict['create_elapsed_time']
 
         if 'error' in data_dict:
             raise Http404

@@ -17,7 +17,8 @@ from neotext.lib.neotext_quote_context.document import Document
 from django.utils.encoding import smart_str
 import hashlib, urllib
 import json
-
+import time
+import decimal
 	
 HASH_ALGORITHM='sha1'
 """ algorithm used to generate hash key: ('sha1','md5','sha256')
@@ -44,7 +45,9 @@ class Quote:
     prior_quote_context_length = 500, # length of excerpt before quote
     after_quote_context_length = 500, # length of excerpt after quote
     starting_location_guess=None	  # guess used by google diff_match_patch
+    
   ):
+    self.start_time = time.time() # measure elapsed time
     self.citing_quote = trim_encode(citing_quote)
     self.citing_url = trim_encode(citing_url)
     self.cited_url = trim_encode(cited_url)
@@ -114,24 +117,28 @@ class Quote:
             data_dict[citing_field] = citing_context.data()[field]
             data_dict[cited_field] = cited_context.data()[field]			
 
-        if not all_fields:
-            excluded_fields = ['cited_raw', 'citing_raw', 
-                'citing_text', 'cited_text', 
-                'cited_quote', 'citing_quote', 'citing_quote_length', 
-                'cited_quote_start_position', 'citing_quote_start_position', 
-                'cited_quote_end_position', 'citing_quote_end_position',
-                'cited_context_start_position', 'citing_context_start_position',
-                'cited_context_end_position', 'citing_context_end_position',
-                'hash_type'
-            ] 	#'cited_cache_url', 'cited_archive_url'
+    # Stop Elapsed Timer
+    elapsed_time = time.time() - self.start_time
+    data_dict['create_elapsed_time'] = format(elapsed_time, '.5f')
+	
+    if not all_fields:
+        excluded_fields = ['cited_raw', 'citing_raw', 
+            'citing_text', 'cited_text', 
+            'cited_quote', 'citing_quote', 'citing_quote_length', 
+            'cited_quote_start_position', 'citing_quote_start_position', 
+            'cited_quote_end_position', 'citing_quote_end_position',
+            'cited_context_start_position', 'citing_context_start_position',
+            'cited_context_end_position', 'citing_context_end_position',
+            'hash_type', 'create_elapsed_time'
+    ] #'cited_cache_url', 'cited_archive_url', 
 			
-            for excluded_field in excluded_fields:
-                data_dict.pop(excluded_field)
+        for excluded_field in excluded_fields:
+            data_dict.pop(excluded_field)
 
-        return data_dict
+    return data_dict
 
 #### Non-class functions ####
-		
+
 def trim_encode(content):
     content = content.strip() 
     return content
