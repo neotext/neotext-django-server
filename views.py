@@ -51,9 +51,9 @@ def demo(request):
         json = response.read()
 	
     """
+    citing_quote = 'I was told on the phone — I forget by whom — that my good friend Roger Gregory, who was in charge at XOC down south in Palo Alto, was throwing things and acting crazy. I heard that ‘everybody was ready to leave,’ possibly quit within a day or so.'
     citing_url = 'http://www.openpolitics.com/2015/09/06/ted-nelson-philosophy-of-hypertext/'
     cited_url = 'http://www.openpolitics.com/links/possiplex-ted-nelson-pg-261/'
-    citing_quote = 'I was told on the phone — I forget by whom — that my good friend Roger Gregory, who was in charge at XOC down south in Palo Alto, was throwing things and acting crazy. I heard that ‘everybody was ready to leave,’ possibly quit within a day or so.'
 
     q = QuoteLookup(citing_quote, citing_url, cited_url)
     json = q.json()
@@ -76,7 +76,7 @@ def quote_index_json(request, sha1=None):
     Example:  http://read.neotext.net/quote/sha1/sha1_hash
     """
     ACCEPT_READ_REQUESTS = True
-    FILESYSTEM_PATH = "/home/neotext/webapps/neotext_static/quote/sha1/"
+    JSON_FILE_PATH = "/home/neotext/webapps/neotext_static/quote/sha1/"
 	
     data_dict = {}  # quote context data
     data = {}
@@ -108,32 +108,29 @@ def quote_index_json(request, sha1=None):
         #Create Quote Record, By Downloading cited URL
         q = QuoteLookup(citing_quote, citing_url, cited_url)
         data_dict = q.dict()
-        create_elapsed_time = data_dict['create_elapsed_time']
 
         if 'error' in data_dict:
             raise Http404
 
         # Save result to database
         try:
-            q = Quote(**data_dict)
-            q.save()
+            quote = Quote(**data_dict)
+            quote.save()
 
         except (IntegrityError, DatabaseError, ProgrammingError) as e:
+            raise
             return HttpResponse(status=409) # conflict
 
-        filename = ''.join([FILESYSTEM_PATH, data_dict['sha1'],'.json'])
-        #data = q.json()
+        filename = ''.join([JSON_FILE_PATH, data_dict['sha1'],'.json'])
+        data = q.json()
 
         #with open(filename, 'wb') as outfile:
         #    json.dump(data, outfile, indent=4, ensure_ascii=False)
 
         #save_json_to_cloud(filename, filedata)
 	
-    #return HttpResponse(data, \
-    #    content_type='application/json', status=201) # 201=created
-
-    return HttpResponse("DB Script. \
-        You're at the neotext webservice.")
+    return HttpResponse(data, \
+        content_type='application/json', status=201) # 201=created
 
 def get_quote_dict_from_sha(sha1):
     try:
