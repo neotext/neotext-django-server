@@ -66,7 +66,7 @@ class QuoteContext:
     )
     return quote_start_position
 
-  @lru_cache(maxsize=32)
+  @lru_cache(maxsize=8)
   def data(self):
     quote_start_position = self.quote_start_position()
     quote_end_position = quote_start_position + self.quote_length()

@@ -78,7 +78,7 @@ class Quote:
     data_dict = self.dict(all_fields)
     return json.dumps(data_dict)
 
-  @lru_cache(maxsize=32)
+  @lru_cache(maxsize=8)
   def dict(self, all_fields=True):
     data_dict = {
         HASH_ALGORITHM : self.hash(),
@@ -92,7 +92,7 @@ class Quote:
 	
     # Populate context fields with Document methods
     document_fields = ['doc_type']
-		
+
     if self.raw_output:
         document_fields.append('raw')
 		
@@ -114,7 +114,7 @@ class Quote:
 		    'quote_start_position', 'quote_end_position', 'quote_length'
 		]
 
-        for field in quote_context_fields:
+        for field in quote_context_fields:	
             citing_field = ''.join(['citing_', field])
             cited_field = ''.join(['cited_', field])
             data_dict[citing_field] = citing_context.data()[field]
@@ -132,8 +132,8 @@ class Quote:
             'cited_quote_end_position', 'citing_quote_end_position',
             'cited_context_start_position', 'citing_context_start_position',
             'cited_context_end_position', 'citing_context_end_position',
-            'hash_type', 'create_elapsed_time'
-    ] #'cited_cache_url', 'cited_archive_url', 
+            'create_elapsed_time', 
+        ] #'cited_cache_url', 'cited_archive_url', 
 			
         for excluded_field in excluded_fields:
             data_dict.pop(excluded_field)

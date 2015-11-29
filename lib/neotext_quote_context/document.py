@@ -40,7 +40,7 @@ class Document:
     #return doc_type
     return 'html'  #hardcode to html for now
 
-  @lru_cache(maxsize=32)
+  @lru_cache(maxsize=8)
   def raw(self):	
     raw = urlopen(self.url ).read()
     logger.debug('Downloading ' + self.url)
@@ -52,7 +52,7 @@ class Document:
         html = self.raw()
     return html
 
-  @lru_cache(maxsize=32)
+  @lru_cache(maxsize=8)
   def text(self):
     """convert html to plaintext"""
     text = ''
