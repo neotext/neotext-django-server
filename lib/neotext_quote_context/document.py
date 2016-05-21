@@ -59,7 +59,7 @@ class Document:
 
 
 		
-    if doc_type == 'html': 
+    if self.doc_type() == 'html': 
         soup = BeautifulSoup(self.html(), "html.parser")
         #texts = soup.findAll(text=True)
         #visible_texts = filter(visible, texts)

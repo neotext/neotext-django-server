@@ -36,6 +36,12 @@ class Quote:
     * Calculates quote context using: QuoteContext class
         which uses google_diff_match_patch (levenshtein) algorithm
     * Returns: dictionary: context()
+
+	Usage: Quote(
+		citing_quote="one does not live by bread alone, but by every word that comes from the mouth of the Lord",
+		citing_url='http://www.neotext.net/demo/',
+		cited_url='https://www.biblegateway.com/passage/?search=Deuteronomy+8&amp;version=NRSV'
+	)
   """
 
   def __init__(self, 
