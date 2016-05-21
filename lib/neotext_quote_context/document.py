@@ -27,7 +27,7 @@ class Document:
   """ Looks up url and computes plain-text version of document
 
     Usage: 
-    doc = Text('http://www.openpolitics.com/links/philosophy-of-hypertext-ted-nelson-pg-26/')
+    doc = Document('http://www.openpolitics.com/links/philosophy-of-hypertext-ted-nelson-pg-26/')
   """
 
   def __init__(self, url	):
@@ -56,13 +56,15 @@ class Document:
   def text(self):
     """convert html to plaintext"""
     text = ''
-    doc_type = self.doc_type()
+
+
 		
     if doc_type == 'html': 
         soup = BeautifulSoup(self.html(), "html.parser")
-        texts = soup.findAll(text=True)
-        visible_texts = filter(visible, texts)
-        text = ''.join(visible_texts)
+        #texts = soup.findAll(text=True)
+        #visible_texts = filter(visible, texts)
+        #text = ''.join(visible_texts)
+        text = soup.get_text()
         text = normalize_whitespace(text)
 
     elif doc_type == 'pdf':

@@ -32,6 +32,7 @@ def index(request):
         You're at the neotext webservice homepage.")
 
 def demo(request):
+    """
     citing_quote = request.POST.get('citing_quote',"I was told on the phone — I forget by whom — that my good friend Roger Gregory, who was in charge at XOC down south in Palo Alto, was throwing things and acting crazy. I heard that ‘everybody was ready to leave,’ possibly quit within a day or so.")  
     citing_url = request.POST.get('citing_url',"http://www.openpolitics.com/2015/09/06/ted-nelson-philosophy-of-hypertext/")  
     cited_url = request.POST.get('cited_url',"http://www.openpolitics.com/links/possiplex-ted-nelson-pg-261/")  
@@ -49,14 +50,15 @@ def demo(request):
     req = urllib.request.Request(url, data)
     with urllib.request.urlopen(req) as response:
         json = response.read()
-	
     """
-    citing_quote = 'I was told on the phone — I forget by whom — that my good friend Roger Gregory, who was in charge at XOC down south in Palo Alto, was throwing things and acting crazy. I heard that ‘everybody was ready to leave,’ possibly quit within a day or so.'
+
+    citing_quote = 'The experience of writing it was one of the most intense I have ever experienced, in an exalted state of excitement and inspiration.The same epiphany I had experienced at the age of five, of the immensity and indescribability of the world, came to me again, but this time with regard to realizing how models and language and thought worked, a way of approaching the great complexity I had envisioned long before.'
     citing_url = 'http://www.openpolitics.com/2015/09/06/ted-nelson-philosophy-of-hypertext/'
-    cited_url = 'http://www.openpolitics.com/links/possiplex-ted-nelson-pg-261/'
+    cited_url = 'http://www.openpolitics.com/links/philosophy-of-hypertext-by-ted-nelson-page-48/'
 
     q = QuoteLookup(citing_quote, citing_url, cited_url)
     json = q.json()
+    """
     """
     return HttpResponse(json, content_type='application/json', status=201) # 201=created	
 	

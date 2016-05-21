@@ -33,6 +33,7 @@ class Quote(models.Model):
 		"""
   )
   citing_url = models.URLField(
+		max_length=2000,
 		null=False, blank=False,
 		help_text='URL of the text that is citing the quoted text'
   )
@@ -94,6 +95,7 @@ class Quote(models.Model):
 		help_text='Date citing document was downloaded'
   )
   cited_url = models.URLField(
+		max_length=2000,
 		null=False, blank=False,
 		help_text='URL of the text that is cited'
   )
