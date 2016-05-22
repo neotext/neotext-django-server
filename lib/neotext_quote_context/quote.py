@@ -11,6 +11,9 @@
 # http://www.opensource.org/licenses/MIT
 
 __author__ = 'timlangeman@gmail.com (Tim Langeman)'
+
+#REMOVE after DEBUGGING
+import pdb
  
 from neotext.lib.neotext_quote_context.quote_context import QuoteContext
 from neotext.lib.neotext_quote_context.document import Document
@@ -21,7 +24,7 @@ import json
 import time
 import decimal
 
-	
+
 HASH_ALGORITHM='sha1'
 """ algorithm used to generate hash key: ('sha1','md5','sha256')
     note: changing algorithm requires adding support to backend 
@@ -87,7 +90,7 @@ class Quote:
   @lru_cache(maxsize=8)
   def dict(self, all_fields=True):
     data_dict = {
-        HASH_ALGORITHM : self.hash(),
+        'sha1' : self.hash(),
         'citing_url' : self.citing_url,
         'cited_url' : self.cited_url,
     }
@@ -98,33 +101,33 @@ class Quote:
 	
     # Populate context fields with Document methods
     document_fields = ['doc_type']
+    quote_context_fields = ['context_before', 'quote', 'context_after' ]
 
     if self.raw_output:
-        document_fields.append('raw')
+	    data_dict['citing_raw'] = citing_doc.raw()
+	    data_dict['cited_raw'] = cited_doc.raw()
 		
     if self.text_output:
-        document_fields.append('text')
+        quote_context_fields.append('text')
 
     for doc_field in document_fields:
         citing_field = ''.join(['citing_', doc_field])
         cited_field = ''.join(['cited_', doc_field])
         data_dict[citing_field] = citing_doc.data()[doc_field]
         data_dict[cited_field] = cited_doc.data()[doc_field]
-	
-        # Find context of quote from within text
-        citing_context = QuoteContext(self.citing_quote, citing_doc.text())
-        cited_context = QuoteContext(self.citing_quote, cited_doc.text())
 
-        quote_context_fields = ['context_start_position', 'context_end_position', 
-		    'context_before', 'quote', 'context_after',  
-		    'quote_start_position', 'quote_end_position', 'quote_length'
-		]
+    # Find context of quote from within text
+    citing_context = QuoteContext(self.citing_quote, citing_doc.text())
+    cited_context = QuoteContext(self.citing_quote, cited_doc.text())
 
-        for field in quote_context_fields:	
-            citing_field = ''.join(['citing_', field])
-            cited_field = ''.join(['cited_', field])
-            data_dict[citing_field] = citing_context.data()[field]
-            data_dict[cited_field] = cited_context.data()[field]			
+    for field in quote_context_fields:	
+        citing_field = ''.join(['citing_', field])
+        cited_field = ''.join(['cited_', field])
+
+		## DEBUG
+        #pdb.set_trace()
+        data_dict[citing_field] = citing_context.data()[field]
+        data_dict[cited_field] = cited_context.data()[field]			
 
     # Stop Elapsed Timer
     elapsed_time = time.time() - self.start_time

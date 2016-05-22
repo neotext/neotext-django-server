@@ -78,8 +78,6 @@ def quote_index_json(request, sha1=None):
     Example:  http://read.neotext.net/quote/sha1/sha1_hash
     """
     ACCEPT_READ_REQUESTS = True
-    JSON_FILE_PATH = "/home/neotext/webapps/neotext_static/quote/sha1/"
-	
     data_dict = {}  # quote context data
     data = {}
     if len(request.POST) == 0:
@@ -143,7 +141,7 @@ def get_quote_dict_from_sha(sha1):
     #Extract fields from Database record
     data_dict = {}
     opts = quote._meta
-    selected_fields = ('citing_url', 'citing_quote', 
+    selected_fields = ('sha1', 'citing_url', 'citing_quote', 
         'citing_context_before', 'citing_context_after', 'citing_doc_type',  \
         'cited_url', 'cited_quote', \
         'cited_context_before', 'cited_context_after', \
@@ -169,7 +167,7 @@ def hashkey(cited_url, citing_url, citing_quote):
     ]) 
 def sha(cited_url, citing_url, citing_quote):
     hash_key = hashkey(cited_url, citing_url, citing_quote)
-    return hashlib.md5(hash_key).hexdigest()
+    return hashlib.sha1(hash_key).hexdigest()
 
 def trim_encode(str):
     str = str.strip()

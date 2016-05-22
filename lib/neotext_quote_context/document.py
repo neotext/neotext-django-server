@@ -42,8 +42,8 @@ class Document:
 
   @lru_cache(maxsize=8)
   def raw(self):	
-    raw = urlopen(self.url ).read()
     logger.debug('Downloading ' + self.url)
+    raw = urlopen(self.url ).read()
     return raw.decode('utf-8')
 	
   def html(self):
@@ -96,6 +96,7 @@ def trim_encode(str):
 
 def normalize_whitespace(str):
     str = str.replace("&nbsp;", " ")
+    str = str.replace("\n", "")
     str = str.replace(u'\xa0', u' ')
     str = str.strip()
     str = re.sub(r'\s+', ' ', str)
