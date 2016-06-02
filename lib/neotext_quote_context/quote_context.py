@@ -75,6 +75,11 @@ class QuoteContext:
         'quote_length': self.quote_length(),
         'quote_start_position' : quote_start_position,
         'quote_end_position' : quote_end_position,
+        'context_before' : '',
+        'context_quote' : '',
+        'context_after' : '',
+        'context_start_position' : '',
+        'context_end_position' : '',
     }
 
     if quote_start_position <= 0:
@@ -117,3 +122,6 @@ class QuoteContext:
                 data['text'] = text
 			
         return data
+
+  def dict(self):
+      return self.data()	

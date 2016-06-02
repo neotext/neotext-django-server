@@ -22,6 +22,7 @@ An api server that:
 ## Dependencies ##
   * Python 3.4, django 1.8, postgres
   * [django-cors-headers](https://github.com/ottoyiu/django-cors-headers/) (included)
+  * tinys3 (https://www.smore.com/labs/tinys3/)
 
 ## Changelog ##
 

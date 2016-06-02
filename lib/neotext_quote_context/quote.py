@@ -13,7 +13,7 @@
 __author__ = 'timlangeman@gmail.com (Tim Langeman)'
 
 #REMOVE after DEBUGGING
-import pdb
+#import pdb; pdb.set_trace()
  
 from neotext.lib.neotext_quote_context.quote_context import QuoteContext
 from neotext.lib.neotext_quote_context.document import Document
@@ -24,7 +24,7 @@ import json
 import time
 import decimal
 
-
+	
 HASH_ALGORITHM='sha1'
 """ algorithm used to generate hash key: ('sha1','md5','sha256')
     note: changing algorithm requires adding support to backend 
@@ -85,7 +85,7 @@ class Quote:
 
   def json(self, all_fields=False):
     data_dict = self.dict(all_fields)
-    return json.dumps(data_dict)
+    return data_dict #json.dumps(data_dict)
 
   @lru_cache(maxsize=8)
   def dict(self, all_fields=True):
@@ -101,7 +101,9 @@ class Quote:
 	
     # Populate context fields with Document methods
     document_fields = ['doc_type']
-    quote_context_fields = ['context_before', 'quote', 'context_after' ]
+    quote_context_fields = ['context_before', 'quote', 'context_after', 'quote_length', 
+        'quote_start_position', 'quote_end_position', 'context_start_position', 'context_end_position', 
+    ]
 
     if self.raw_output:
 	    data_dict['citing_raw'] = citing_doc.raw()
@@ -127,7 +129,7 @@ class Quote:
 		## DEBUG
         #pdb.set_trace()
         data_dict[citing_field] = citing_context.data()[field]
-        data_dict[cited_field] = cited_context.data()[field]			
+        data_dict[cited_field] = cited_context.data()[field]
 
     # Stop Elapsed Timer
     elapsed_time = time.time() - self.start_time
@@ -143,7 +145,7 @@ class Quote:
             'cited_context_end_position', 'citing_context_end_position',
             'create_elapsed_time', 
         ] #'cited_cache_url', 'cited_archive_url', 
-			
+	
         for excluded_field in excluded_fields:
             data_dict.pop(excluded_field)
 

@@ -25,5 +25,6 @@ urlpatterns = patterns('',
     url(r'^quote/$', views.quote_index_json, name='quote_demo'),
     url(r'^quote/sha1/(?P<sha1>[a-fA-F\d]{40}).json$', views.quote_index_json, name='quote_index_json'),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^demo/$', views.demo, name='demo')
+    url(r'^demo/$', views.demo, name='demo'),
+
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
