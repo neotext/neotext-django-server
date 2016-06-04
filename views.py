@@ -26,7 +26,7 @@ import urllib.request
 from .models import Quote
 from neotext.lib.neotext_quote_context.quote import Quote as QuoteLookup
 from neotext.settings import AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY, AMAZON_S3_BUCKET, AMAZON_S3_ENDPOINT
-from neotext import JSON_FILE_PATH, VERSION_NUM
+from neotext.settings import JSON_FILE_PATH, VERSION_NUM
 import tinys3
 import hashlib
 
@@ -133,7 +133,7 @@ def quote_index_json(request, sha1=None):
         with open(local_filename, 'w') as outfile:
             json.dump(data, outfile, indent=4, ensure_ascii=False)
 
-        save_json_to_cloud(filename, local_filename, outfile)
+        save_json_to_cloud(filename, local_filename)
 	
     return HttpResponse(data, \
         content_type='application/json', status=201) # 201=created
@@ -179,15 +179,21 @@ def trim_encode(str):
     str = str.strip()
     return str
 
-def save_json_to_cloud(filename, local_filename, outfile):
-	conn = tinys3.Connection(AMAZON_ACCESS_KEY,AMAZON_SECRET_KEY,tls=True, endpoint=AMAZON_S3_ENDPOINT)
 
-	f = open(local_filename,'rb')
-	folder_filename = "quote/sha1/".join('v', VERSION_NUM, '/', filename)
-		
-	conn.upload(folder_filename, f, bucket=AMAZON_S3_BUCKET,
-		content_type='application/json'
-	)
-	
-	print("upload succeeded.")
-	return True
+def save_json_to_cloud(filename, local_filename):
+    conn = tinys3.Connection(AMAZON_ACCESS_KEY,AMAZON_SECRET_KEY,tls=True, endpoint=AMAZON_S3_ENDPOINT)
+    f = open(local_filename,'rb')
+
+    #Divide into subdirectories like git: 
+    #http://www.quora.com/File-Systems-Why-does-git-shard-the-objects-folder-into-256-subfolders 
+    shard_folder = filename[:2]	
+    path_list = [AMAZON_S3_BUCKET, "/quote/sha1/", VERSION_NUM, "/", shard_folder]
+    bucket_folder = "".join(path_list)
+
+    conn.upload(filename, f, bucket=bucket_folder,
+        content_type='application/json'
+        #expires = 'max'		
+    )
+
+    print("upload succeeded.")
+    return True
