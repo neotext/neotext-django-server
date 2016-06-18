@@ -1,4 +1,5 @@
-from neotext.lib.google_diff_match_patch.diff_match_patch import diff_match_patch
+from neotext.lib.google_diff_match_patch.diff_match_patch \
+    import diff_match_patch
 from functools import lru_cache
 
 __author__ = 'timlangeman@gmail.com (Tim Langeman)'
@@ -46,11 +47,11 @@ class QuoteContext:
         """
 
         quote_locate = diff_match_patch()
-        quote_locate.Diff_Timeout = 5.0 	# Maybe these should be configurable
-        quote_locate.Match_Threshold = 0.5  # Maybe these should be configurable
+        quote_locate.Diff_Timeout = 5.0 	# Tweak this?
+        quote_locate.Match_Threshold = 0.5  # Tweak this?
 
         # Guess a big distance so that starting guess location is unimportant
-        quote_locate.Match_Distance=(self.text_length() * 2) # may need tweaking
+        quote_locate.Match_Distance = (self.text_length() * 2)  # Tweak this?
         quote_start_position = quote_locate.match_bitap(
             self.text,
             self.quote,
@@ -79,12 +80,12 @@ class QuoteContext:
             data['text'] = self.text
             return data
 
-        else:  #Calculate quote starting postion and context
+        else:  # Calculate quote starting postion and context
             quote_end_position = quote_start_position + self.quote_length()
 
             # Calculate starting position of prior and subsequent sections
             context_start_position = \
-                    quote_start_position - self.prior_quote_context_length
+                quote_start_position - self.prior_quote_context_length
 
             # if quote has less than (500) characters of prior context
             if (context_start_position < 0):
@@ -93,17 +94,19 @@ class QuoteContext:
 
             # Context After ends (500) characters after quote end
             context_end_position = quote_end_position + \
-                                    self.after_quote_context_length
+                self.after_quote_context_length
             # Unless file ends first
             if (context_end_position > self.text_length()):
                 context_end_position = self.text_length()
             else:
-                context_end_position=context_end_position + \
-                                        self.after_quote_context_length
+                context_end_position = context_end_position + \
+                    self.after_quote_context_length
 
                 # Get text that immediately preceeds and follows
                 text = self.text
-                context_before = text[context_start_position: quote_start_position]
+                context_before = text[
+                    context_start_position: quote_start_position
+                ]
                 context_quote = text[quote_start_position: quote_end_position]
                 context_after = text[quote_end_position: context_end_position]
 
