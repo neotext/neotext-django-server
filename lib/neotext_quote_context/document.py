@@ -1,9 +1,8 @@
-# from neotext.lib.neotext_quote_context.quote import Quote
+#from neotext.lib.neotext_quote_context.quote import Quote
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 from functools import lru_cache
 import re
-# import magic	# https://github.com/ahupp/python-magic
 
 import logging
 logger = logging.getLogger(__name__)
@@ -15,7 +14,7 @@ class Document:
     """ Looks up url and computes plain-text version of document
 
         Usage:
-        doc = Document('http://www.openpolitics.com/links/philosophy-of-hypertext-ted-nelson-pg-26/')
+        doc = Document('http://www.openpolitics.com/2016/05/13/ted-nelson-philosophy-of-hypertext/')
     """
 
     def __init__(self, url	):
@@ -25,6 +24,7 @@ class Document:
         """ Todo: Distinguish between html, text, .doc, and pdf"""
         # mime = magic.Magic(mime=True)
         # doc_type = mime.from_file(self.raw())
+        # import magic	# https://github.com/ahupp/python-magic
         # return doc_type
         return 'html'  # hardcode to html for now
 
@@ -66,6 +66,27 @@ class Document:
 
         return text
 
+    def citation_urls(self):
+        cite_urls = []
+        soup = BeautifulSoup(self.html(), 'html.parser')
+        for cite in soup.find_all(re.compile(r'(blockquote|q)')):
+            if cite.get('cite'):
+                cite_urls.append(cite.get('cite'))
+        return cite_urls
+
+    def citations(self):
+        for cited_url in self.citation_urls():
+            """
+            q = Quote(
+                "citing_quote",  # todo: lookup
+                self.url,
+                cited_url
+            )
+            q.save_to_db()
+            q.save_json_to_cloud()
+            """
+            pass
+
     def data(self):
         data = {}
         data['doc_type'] = self.doc_type()
@@ -74,27 +95,10 @@ class Document:
         data['text'] = self.text()
         return data
 
-    def citation_urls(self):
-        soup = BeautifulSoup(self.html(), 'html.parser')
-        cite_urls = []
-
-        for cite in soup.find_all('blockquote', 'q'):
-            cite_urls.append(cite.get('cite'))
-
-    def citations(self):
-        pass
-        """
-        for cited_url in self.citation_urls():
-            q = Quote(
-                "citing_quote",  # todo: lookup
-                self.url,
-                cited_url
-            )
-            q.save_to_db()
-            q.save_json_to_cloud()
-        """
 
 # Non-class functions #######################
+
+
 def trim_encode(str):
     trimmed_str = str.strip()
     return trimmed_str
