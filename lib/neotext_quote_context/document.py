@@ -1,4 +1,13 @@
-#from neotext.lib.neotext_quote_context.quote import Quote
+# -*- coding: utf-8 -*-
+# Copyright (C) 2015-2016 Tim Langeman and contributors
+# <see AUTHORS.txt file>
+#
+# This library is part of the Neotext project:
+# http://www.neotext.net/
+
+# The code for this server library is released under the MIT License:
+# http://www.opensource.org/licenses/mit-license
+
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 from functools import lru_cache
@@ -7,8 +16,11 @@ import re
 import logging
 logger = logging.getLogger(__name__)
 
-__author__ = 'timlangeman@gmail.com (Tim Langeman)'
-
+__author__ = 'Tim Langeman'
+__email__ = "timlangeman@gmail.com"
+__copyright__ = "Copyright (C) 2015-2016 Tim Langeman"
+__license__ = "MIT"
+__version__ = "0.2"
 
 class Document:
     """ Looks up url and computes plain-text version of document
@@ -94,7 +106,6 @@ class Document:
         data['raw'] = self.raw()
         data['text'] = self.text()
         return data
-
 
 # Non-class functions #######################
 

@@ -1,8 +1,22 @@
+# -*- coding: utf-8 -*-
+# Copyright (C) 2015-2016 Tim Langeman and contributors
+# <see AUTHORS.txt file>
+#
+# This library is part of the Neotext project:
+# http://www.neotext.net/
+
+# The code for this server library is released under the MIT License:
+# http://www.opensource.org/licenses/mit-license
+
 from neotext.lib.google_diff_match_patch.diff_match_patch \
     import diff_match_patch
 from functools import lru_cache
 
-__author__ = 'timlangeman@gmail.com (Tim Langeman)'
+__author__ = 'Tim Langeman'
+__email__ = "timlangeman@gmail.com"
+__copyright__ = "Copyright (C) 2015-2016 Tim Langeman"
+__license__ = "MIT"
+__version__ = "0.2"
 
 
 class QuoteContext:

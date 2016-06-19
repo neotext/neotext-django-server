@@ -1,3 +1,12 @@
+# Copyright (C) 2015-2016 Tim Langeman and contributors
+# <see AUTHORS.txt file>
+#
+# This module is part of Neotext and is released under
+# the MIT License: http://www.opensource.org/licenses/mit-license
+#
+# Neotext Quote-Context Python Server Library
+# http://www.neotext.net/code/
+
 from neotext.lib.neotext_quote_context.quote_context import QuoteContext
 from neotext.lib.neotext_quote_context.document import Document
 from neotext.settings import AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY
@@ -9,7 +18,12 @@ import hashlib
 import time
 import tinys3
 
-__author__ = 'timlangeman@gmail.com (Tim Langeman)'
+__author__ = 'Tim Langeman'
+__email__ = "timlangeman@gmail.com"
+__copyright__ = "Copyright (C) 2015-2016 Tim Langeman"
+__license__ = "MIT"
+__version__ = "0.2"
+
 
 HASH_ALGORITHM = 'sha1'
 

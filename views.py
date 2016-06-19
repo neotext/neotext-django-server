@@ -1,16 +1,12 @@
-#!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
+# Copyright (C) 2015-2016 Tim Langeman and contributors
+# <see AUTHORS.txt file>
 #
-# Neotext Quote-Context Python Server Library
-# https://github.com/neotext/neotext-quote-context-server
-# 
-# Copyright 2015, Tim Langeman
-# http://www.openpolitics.com/tim
-# 
-# Licensed under the MIT license:
-# http://www.opensource.org/licenses/MIT
+# This library is part of the Neotext project:
+# http://www.neotext.net/
 
-__author__ = 'timlangeman@gmail.com (Tim Langeman)'
+# The code for this server library is released under the MIT License:
+# http://www.opensource.org/licenses/mit-license
 
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, get_object_or_404
@@ -30,7 +26,11 @@ from neotext.settings import JSON_FILE_PATH, VERSION_NUM
 import tinys3
 import hashlib
 
-
+__author__ = 'Tim Langeman'
+__email__ = "timlangeman@gmail.com"
+__copyright__ = "Copyright (C) 2015-2016 Tim Langeman"
+__license__ = "MIT"
+__version__ = "0.2"
 
 def index(request):
     return HttpResponse("Hello, world. \
@@ -38,9 +38,9 @@ def index(request):
 
 def demo(request):
     """
-    citing_quote = request.POST.get('citing_quote',"I was told on the phone — I forget by whom — that my good friend Roger Gregory, who was in charge at XOC down south in Palo Alto, was throwing things and acting crazy. I heard that ‘everybody was ready to leave,’ possibly quit within a day or so.")  
-    citing_url = request.POST.get('citing_url',"http://www.openpolitics.com/2015/09/06/ted-nelson-philosophy-of-hypertext/")  
-    cited_url = request.POST.get('cited_url',"http://www.openpolitics.com/links/possiplex-ted-nelson-pg-261/")  
+    citing_quote = request.POST.get('citing_quote',"I was told on the phone — I forget by whom — that my good friend Roger Gregory, who was in charge at XOC down south in Palo Alto, was throwing things and acting crazy. I heard that ‘everybody was ready to leave,’ possibly quit within a day or so.")
+    citing_url = request.POST.get('citing_url',"http://www.openpolitics.com/2015/09/06/ted-nelson-philosophy-of-hypertext/")
+    cited_url = request.POST.get('cited_url',"http://www.openpolitics.com/links/possiplex-ted-nelson-pg-261/")
 
     post_values = {'citing_quote' : citing_quote,
         'citing_url' : citing_url,
@@ -49,7 +49,7 @@ def demo(request):
 
     #url = 'http://db.neotext.net/quote/'
     url = 'http://neotext.webfactional.com/quote/'
-	
+
     data = parse.urlencode(post_values)
     data = data.encode('utf-8') # data should be bytes
     req = urllib.request.Request(url, data)
@@ -65,12 +65,12 @@ def demo(request):
     json = q.json()
     """
     """
-    return HttpResponse(json, content_type='application/json', status=201) # 201=created	
-	
+    return HttpResponse(json, content_type='application/json', status=201) # 201=created
+
 def quote_index_html(request, sha1):
     quote = get_object_or_404(Quote, pk=sha1)
-    return render(request, 
-        'quote/quote_index.html', 
+    return render(request,
+        'quote/quote_index.html',
         {'quote': quote, 'request_type': request.GET }
     )
 
@@ -79,7 +79,7 @@ def quote_index_json(request, sha1=None):
     """ Lookup context from POSTed quote and url
     Save resulting json file to Amazon S3
 
-    Reads should be done from amazon S3: 
+    Reads should be done from amazon S3:
     Example:  http://read.neotext.net/quote/sha1/v0.02/sha1_hash
     """
     ACCEPT_READ_REQUESTS = True
@@ -99,9 +99,9 @@ def quote_index_json(request, sha1=None):
                 else:
                     raise Http404
     else:
-        citing_quote = request.POST.get('citing_quote','')  
+        citing_quote = request.POST.get('citing_quote','')
         citing_quote = citing_quote.strip()
-        citing_url = request.POST.get('citing_url','')  
+        citing_url = request.POST.get('citing_url','')
         cited_url = request.POST.get('cited_url', '')
 
         if len(citing_quote) == 0:
@@ -109,7 +109,7 @@ def quote_index_json(request, sha1=None):
 
         if ( not(is_url(citing_url)) or not(is_url(cited_url)) ):
             return HttpResponse(status=400) # bad request
-		
+
         #Create Quote Record, By Downloading cited URL
         q = QuoteLookup(citing_quote, citing_url, cited_url)
         data_dict = q.dict()
@@ -134,7 +134,7 @@ def quote_index_json(request, sha1=None):
             json.dump(data, outfile, indent=4, ensure_ascii=False)
 
         save_json_to_cloud(filename, local_filename)
-	
+
     return HttpResponse(data, \
         content_type='application/json', status=201) # 201=created
 
@@ -143,11 +143,11 @@ def get_quote_dict_from_sha(sha1):
         quote = Quote.objects.get(sha1=sha1)
     except Quote.DoesNotExist:
         return None
-		
+
     #Extract fields from Database record
     data_dict = {}
     opts = quote._meta
-    selected_fields = ('sha1', 'citing_url', 'citing_quote', 
+    selected_fields = ('sha1', 'citing_url', 'citing_quote',
         'citing_context_before', 'citing_context_after', 'citing_doc_type',  \
         'cited_url', 'cited_quote', \
         'cited_context_before', 'cited_context_after', \
@@ -165,12 +165,12 @@ def get_quote_dict_from_sha(sha1):
 def is_url(url_string):
     parsed_url = parse.urlparse(url_string)
     return bool(parsed_url.scheme)
-	
+
 def hashkey(cited_url, citing_url, citing_quote):
-    return ''.join([ trim_encode(cited_url) , "|", 
-                trim_encode(citing_url), "|", 
-                trim_encode(citing_quote) 
-    ]) 
+    return ''.join([ trim_encode(cited_url) , "|",
+                trim_encode(citing_url), "|",
+                trim_encode(citing_quote)
+    ])
 def sha(cited_url, citing_url, citing_quote):
     hash_key = hashkey(cited_url, citing_url, citing_quote)
     return hashlib.sha1(hash_key).hexdigest()
@@ -184,15 +184,15 @@ def save_json_to_cloud(filename, local_filename):
     conn = tinys3.Connection(AMAZON_ACCESS_KEY,AMAZON_SECRET_KEY,tls=True, endpoint=AMAZON_S3_ENDPOINT)
     f = open(local_filename,'rb')
 
-    #Divide into subdirectories like git: 
-    #http://www.quora.com/File-Systems-Why-does-git-shard-the-objects-folder-into-256-subfolders 
-    shard_folder = filename[:2]	
+    #Divide into subdirectories like git:
+    #http://www.quora.com/File-Systems-Why-does-git-shard-the-objects-folder-into-256-subfolders
+    shard_folder = filename[:2]
     path_list = [AMAZON_S3_BUCKET, "/quote/sha1/", VERSION_NUM, "/", shard_folder]
     bucket_folder = "".join(path_list)
 
     conn.upload(filename, f, bucket=bucket_folder,
         content_type='application/json'
-        #expires = 'max'		
+        #expires = 'max'
     )
 
     print("upload succeeded.")
