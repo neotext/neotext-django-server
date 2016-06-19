@@ -69,7 +69,7 @@ class Document:
     def citation_urls(self):
         cite_urls = []
         soup = BeautifulSoup(self.html(), 'html.parser')
-        for cite in soup.find_all(re.compile(r'(blockquote|q)')):
+        for cite in soup.find_all(['blockquote', 'q']):
             if cite.get('cite'):
                 cite_urls.append(cite.get('cite'))
         return cite_urls
