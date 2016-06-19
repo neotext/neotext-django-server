@@ -1,0 +1,6 @@
+Neotext was created by Tim Langeman.
+
+Major contributing authors include:
+
+- Tim Langeman <timlangeman@gmail.com>
+- Your Name here
