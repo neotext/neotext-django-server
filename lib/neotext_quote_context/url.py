@@ -11,6 +11,7 @@
 from neotext.lib.neotext_quote_context.quote import Quote
 from neotext.lib.neotext_quote_context.document import Document
 from bs4 import BeautifulSoup
+from neotext.settings import NUM_DOWNLOAD_PROCESSES
 from multiprocessing import Pool
 import time
 
@@ -79,36 +80,27 @@ class URL:
         """
 
         citations = []
-        num_processes = 25
-        pool = Pool(processes=num_processes)
+        pool = Pool(processes=NUM_DOWNLOAD_PROCESSES)
 
-        result = pool.map_async(
-            load_quote,
-            self.citations_list_dict()
-        )
+        result = pool.map_async(load_quote, self.citations_list_dict())
         while not result.ready():
             citations.append(result.get)
-
         pool.close()
         return citations
 
     def save_json_locally(self):
-        quote_list = self.citations()
-        for q in quote_list:
+        for q in self.citations():
             try:
                 q.save_json_locally()
             except AttributeError:  # Skip if not match found
                 pass
 
     def save_citations_to_db(self):
-        quote_list = self.citations()
-        for q in quote_list:
+        for q in self.citations():
             q.save_to_db()
-            pass
 
     def save_citations_to_cloud(self):
-        quote_list = self.citations()
-        for q in quote_list:
+        for q in self.citations():
             q.save_json_to_cloud()
 
 

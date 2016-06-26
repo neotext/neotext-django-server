@@ -23,13 +23,25 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
-CORS_ORIGIN_ALLOW_ALL = True 
+# NEOTEXT SETTINGS
+JSON_FILE_PATH = "/Library/WebServer/Documents/quote/sha1/"
+VERSION_NUM = '0.02'
+NUM_DOWNLOAD_PROCESSES = 25  # num citations downloaded simultaneously
+
+# AMAZON S3 Login information
+AMAZON_ACCESS_KEY = '123243545789459063022'
+AMAZON_SECRET_KEY = 'alksjdfla;jkdfklajkfgjaklrekgljreklgsdfl'
+AMAZON_S3_BUCKET = 'read.neotext.net'
+AMAZON_S3_ENDPOINT = 's3.amazonaws.com'
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOW_METHODS = (
         'GET',  # Get rid of 'GET' eventually
         'POST',
 )
+
 
 CORS_ALLOW_HEADERS = (
     'content-type',
@@ -45,7 +57,8 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.admindocs', 
+    'django.contrib.admindocs',
+    # 'django_extensions',
     'neotext',
     'corsheaders',
 )
@@ -54,6 +67,7 @@ CORS_EXPOSE_HEADERS = ()
 CORS_PREFLIGHT_MAX_AGE = 86400
 CORS_ALLOW_CREDENTIALS = False
 CORS_REPLACE_HTTPS_REFERER = False
+
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -64,6 +78,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 ROOT_URLCONF = 'neotext.urls'
@@ -103,6 +118,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
+    '/home/timlangeman/webapps/static_neotext/',
+    '/Users/timlangeman/Sites/neotext/neotext/templates/',
+    '/Users/timlangeman/Sites/neotext/neotext/static/',
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
