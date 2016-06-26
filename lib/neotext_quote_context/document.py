@@ -9,7 +9,7 @@
 # http://www.opensource.org/licenses/mit-license
 
 from bs4 import BeautifulSoup
-from urllib.request import urlopen
+from urllib.request import urlopen, HTTPError
 from functools import lru_cache
 import re
 
@@ -43,8 +43,11 @@ class Document:
     @lru_cache(maxsize=8)
     def raw(self):
         logger.debug('Downloading ' + self.url)
-        raw = urlopen(self.url).read()
-        return raw.decode('utf-8')
+        try:
+            raw = urlopen(self.url).read()
+            return raw.decode('utf-8')
+        except HTTPError:
+            return ""
 
     def html(self):
         html = None
