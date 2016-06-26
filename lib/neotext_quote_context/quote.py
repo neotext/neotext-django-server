@@ -1,11 +1,12 @@
+# -*- coding: utf-8 -*-
 # Copyright (C) 2015-2016 Tim Langeman and contributors
 # <see AUTHORS.txt file>
 #
-# This module is part of Neotext and is released under
-# the MIT License: http://www.opensource.org/licenses/mit-license
-#
-# Neotext Quote-Context Python Server Library
-# http://www.neotext.net/code/
+# This library is part of the Neotext project:
+# http://www.neotext.net/
+
+# The code for this server library is released under the MIT License:
+# http://www.opensource.org/licenses/mit-license
 
 from neotext.lib.neotext_quote_context.quote_context import QuoteContext
 from neotext.lib.neotext_quote_context.document import Document
@@ -110,12 +111,13 @@ class Quote:
 
     def json(self, all_fields=True):
         """ json-encoded version of dictionary """
-        return json_lib.dump(self.dict(all_fields=all_fields))
+        return json_lib.dumps(self.dict(all_fields=all_fields))
 
     def save_json_locally(self, all_fields=True):
-        f = open(self.local_filename(), 'w')
-        print >> f, self.json(all_fields=True)
-        f.close()
+        #f = open(self.local_filename(), 'w')
+        #print >> f, self.json(all_fields=True)
+        with open(self.local_filename(), 'w') as f:
+            f.write(self.json(all_fields=all_fields))
 
     def save_json_to_cloud(self):
         """
