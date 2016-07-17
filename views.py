@@ -20,11 +20,17 @@ import codecs
 import os.path, json, datetime
 import urllib.request
 from .models import Quote
+from neotext.lib.neotext_quote_context.url import URL
 from neotext.lib.neotext_quote_context.quote import Quote as QuoteLookup
 from neotext.settings import AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY, AMAZON_S3_BUCKET, AMAZON_S3_ENDPOINT
 from neotext.settings import JSON_FILE_PATH, VERSION_NUM
 import tinys3
 import hashlib
+
+from django.template.loader import get_template
+from django.template import Context
+from django.http import HttpResponse
+import datetime
 
 __author__ = 'Tim Langeman'
 __email__ = "timlangeman@gmail.com"
@@ -35,6 +41,19 @@ __version__ = "0.2"
 def index(request):
     return HttpResponse("Hello, world. \
         You're at the neotext webservice homepage.")
+
+def post(request):
+    url_post = request.POST.get('url', '')
+    url = URL(url_post)
+    url.save_json_locally()
+
+
+    template = get_template('post.html')
+    context = Context({
+        'url': url,
+    })
+    html = template.render(context)
+    return HttpResponse(html)
 
 def demo(request):
     """

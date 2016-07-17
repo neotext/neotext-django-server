@@ -9,6 +9,10 @@
 # http://www.opensource.org/licenses/mit-license
 
 from django.db import models
+from neotext import settings
+import json as json_lib
+import tinys3
+
 
 __author__ = 'Tim Langeman'
 __email__ = "timlangeman@gmail.com"
@@ -27,12 +31,8 @@ class Quote(models.Model):
     )
     sha1 = models.CharField(
         unique=True,
-        max_length=40,
-        help_text='Sha1 hash of: citing_quote|citing_url|cited_cited'
-        """
-        validators=[RegexValidator(regex='^[A-Fa-f0-9]{4}$',
-            message='Length has to be 40 (hex-digits)', code='nomatch')]
-        """
+        max_length=40
+        # help_text='Sha1 hash of: citing_quote|citing_url|cited_cited'
     )
     citing_url = models.URLField(
         max_length=2000,
@@ -187,3 +187,71 @@ class Quote(models.Model):
 
     def __str__(self):
         return self.citing_quote
+
+    def filename(self):
+        """
+            Name of file stored locally and uploaded to the cloud
+        """
+        return ''.join([self.sha1, '.json'])
+
+    def local_filename(self):
+        return ''.join([settings.JSON_FILE_PATH, self.filename()])
+
+    def publish_json(self):
+        print("Publishing json ..")
+        self.save_json_locally()
+        filename = self.save_json_to_cloud()
+        return filename
+
+    def json(self, all_fields=False):
+        """ json-encoded version of dictionary """
+        json_fields = {}
+        all_data = self.__dict__
+        included_fields = [
+            'cited_url', 'citing_url',
+            'cited_context_before', 'cited_context_after',
+            'citing_context_before', 'citing_context_after',
+            'citing_quote', 'cited_quote'
+        ]
+        for field in included_fields:
+            json_fields[field] = all_data[field]
+        return json_lib.dumps(json_fields)
+
+    def save_json_locally(self):
+        with open(self.local_filename(), 'w') as f:
+            f.write(self.json())
+        print("Json saved locally ..")
+
+    def save_json_to_cloud(self):
+        """
+            Upload json file to Amazon S3
+        """
+        print('Starting upload json to cloud: ' + self.local_filename())
+
+        f = open(self.local_filename(), 'rb')
+
+        # Divide into subdirectories like git:
+        # http://www.quora.com/File-Systems-Why-does-git-shard-the-objects-folder-into-256-subfolders
+        shard_folder = self.filename()[:2]
+        path_list = (''.join([
+            settings.AMAZON_S3_BUCKET,
+            "/quote/", settings.HASH_ALGORITHM, '/',
+            settings.VERSION_NUM, "/",
+            shard_folder
+        ]))
+        bucket_folder = ''.join(path_list)
+
+        conn = tinys3.Connection(
+            settings.AMAZON_ACCESS_KEY,
+            settings.AMAZON_SECRET_KEY,
+            tls=True,
+            endpoint=settings.AMAZON_S3_ENDPOINT
+        )
+        conn.upload(
+            self.filename(), f,
+            bucket=bucket_folder,
+            content_type='application/json',
+            expires='max'
+        )
+        print("json upload succeeded: " + self.filename())
+        return self.filename()
