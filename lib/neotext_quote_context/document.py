@@ -45,7 +45,7 @@ class Document:
         logger.debug('Downloading ' + self.url)
         try:
             raw = urlopen(self.url).read()
-            return raw.decode('utf-8')
+            return raw  # .decode('utf-8')
         except HTTPError:
             return ""
 

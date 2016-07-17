@@ -10,28 +10,17 @@
 
 from neotext.lib.neotext_quote_context.quote_context import QuoteContext
 from neotext.lib.neotext_quote_context.document import Document
-from neotext.settings import AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY
-from neotext.settings import AMAZON_S3_BUCKET, AMAZON_S3_ENDPOINT
-from neotext.settings import JSON_FILE_PATH, VERSION_NUM
+from neotext.settings import HASH_ALGORITHM
+
 from functools import lru_cache
-import json as json_lib
 import hashlib
 import time
-import tinys3
 
 __author__ = 'Tim Langeman'
 __email__ = "timlangeman@gmail.com"
 __copyright__ = "Copyright (C) 2015-2016 Tim Langeman"
 __license__ = "MIT"
 __version__ = "0.2"
-
-
-HASH_ALGORITHM = 'sha1'
-
-""" algorithm used to generate hash key: ('sha1','md5','sha256')
-    note: changing algorithm requires adding support to backend
-    if using a relational db, may require new/different column definition
-"""
 
 
 class Quote:
@@ -92,68 +81,16 @@ class Quote:
     def error(self):
         """
             If there is a problem calculating the quote context, an
-            error is stored in self.data_dict()['error']
+            error is stored in self.data()['error']
             returns boolean
         """
-        return ('error' in self.dict())
+        return ('error' in self.data())
 
     def error_str(self):
-        return self.dict()['error']
-
-    def filename(self):
-        """
-            Name of file stored locally and uploaded to the cloud
-        """
-        return ''.join([self.hash(), '.json'])
-
-    def local_filename(self):
-        return ''.join([JSON_FILE_PATH, self.filename()])
-
-    def json(self, all_fields=True):
-        """ json-encoded version of dictionary """
-        return json_lib.dumps(self.dict(all_fields=all_fields))
-
-    def save_json_locally(self, all_fields=True):
-        #f = open(self.local_filename(), 'w')
-        #print >> f, self.json(all_fields=True)
-        with open(self.local_filename(), 'w') as f:
-            f.write(self.json(all_fields=all_fields))
-
-    def save_json_to_cloud(self):
-        """
-            Upload json file to Amazon S3
-        """
-
-        f = open(self.local_filename(), 'rb')
-
-        # Divide into subdirectories like git:
-        # http://www.quora.com/File-Systems-Why-does-git-shard-the-objects-folder-into-256-subfolders
-        shard_folder = self.filename()[:2]
-        path_list = (''.join([
-            AMAZON_S3_BUCKET,
-            "/quote/", HASH_ALGORITHM, '/',
-            VERSION_NUM, "/",
-            shard_folder
-        ]))
-        bucket_folder = ''.join(path_list)
-
-        conn = tinys3.Connection(
-            AMAZON_ACCESS_KEY,
-            AMAZON_SECRET_KEY,
-            tls=True,
-            endpoint=AMAZON_S3_ENDPOINT
-        )
-
-        conn.upload(self.filename(), f,
-                    bucket=bucket_folder,
-                    content_type='application/json'
-                    # expires = 'max'
-                    )
-        print("json upload succeeded.")
-        return True
+        return self.data()['error']
 
     @lru_cache(maxsize=8)
-    def dict(self, all_fields=True):
+    def data(self, all_fields=True):
         """
             Calculate context of quotation using QuoteContext class
             Optionally return a smaller subset of fields to upload to cloud
@@ -172,8 +109,9 @@ class Quote:
         # Populate context fields with Document methods
         document_fields = ['doc_type']
         quote_context_fields = [
-            'context_before', 'quote', 'context_after',
+            'context_before', 'context_after',  # 'quote',
             'quote_length',
+            'quote',
             'quote_start_position', 'quote_end_position',
             'context_start_position', 'context_end_position',
         ]
@@ -210,7 +148,6 @@ class Quote:
             excluded_fields = [
                 'cited_raw', 'citing_raw',
                 'citing_text', 'cited_text',
-                'cited_quote', 'citing_quote',
                 'citing_quote_length',
                 'cited_quote_start_position', 'citing_quote_start_position',
                 'cited_quote_end_position', 'citing_quote_end_position',

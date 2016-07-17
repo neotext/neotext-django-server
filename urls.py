@@ -23,6 +23,7 @@ __version__ = "0.2"
 urlpatterns = patterns(
     '',
     url(r'^$', views.index, name='index'),
+    url(r'^post/$', views.post, name='post'),
     url(r'^quote/$', views.quote_index_json, name='quote_demo'),
     url(r'^quote/sha1/(?P<sha1>[a-fA-F\d]{40}).json$',
         views.quote_index_json, name='quote_index_json'),

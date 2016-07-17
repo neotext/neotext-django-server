@@ -1,0 +1,22 @@
+<html>
+<body>
+
+{% if url %}
+  Looking up url: <a href="{{ url}}">{{ url }}</a>
+
+  {% for citation in url.citation_urls %}
+    <a href="{{ citation.cited_url }}">{{ citation.cited_url }}</a>
+    {{ citation.citing_quote }}
+  {% endfor %}
+
+{% endif %}
+
+<h1>Submit a URL</h1>
+<form method="post" action="">
+  URL:
+  <input type="text" name="url" />
+  <input type="submit" value="submit" />
+</form>
+
+</body>
+</html>
