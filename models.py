@@ -10,6 +10,7 @@
 
 from django.db import models
 from neotext import settings
+from urllib.request import urlopen, HTTPError
 import json as json_lib
 import tinys3
 
@@ -189,10 +190,18 @@ class Quote(models.Model):
         return self.citing_quote
 
     def filename(self):
-        """
-            Name of file stored locally and uploaded to the cloud
-        """
+        """ Name of file stored locally and uploaded to the cloud """
         return ''.join([self.sha1, '.json'])
+
+    def json_url(self):
+        return ''.join([
+            settings.SITE_READ_URL,
+            '/quote/',
+            settings.HASH_ALGORITHM, '/',
+            settings.VERSION_NUM, '/',
+            self.filename()[:2], '/',
+            self.filename()
+        ])
 
     def local_filename(self):
         return ''.join([settings.JSON_FILE_PATH, self.filename()])
@@ -203,17 +212,34 @@ class Quote(models.Model):
         filename = self.save_json_to_cloud()
         return filename
 
-    def json(self, all_fields=False):
-        """ json-encoded version of dictionary """
-        json_fields = {}
-        all_data = self.__dict__
-        included_fields = [
+    def is_published(self):
+        public_json_url = self.json_url()
+        try:
+            public_json_binary = urlopen(public_json_url).read()
+        except HTTPError:
+            return False
+        public_json = public_json_binary.decode('ascii')
+
+        # Test: Is this valid json?
+        try:
+            json_lib.loads(public_json)
+        except ValueError:
+            return False
+        return True
+
+    def json_fields(self):
+        return [
             'cited_url', 'citing_url',
             'cited_context_before', 'cited_context_after',
             'citing_context_before', 'citing_context_after',
             'citing_quote', 'cited_quote'
         ]
-        for field in included_fields:
+
+    def json(self, all_fields=False):
+        """ json-encoded version of dictionary """
+        json_fields = {}
+        all_data = self.__dict__
+        for field in self.json_fields:
             json_fields[field] = all_data[field]
         return json_lib.dumps(json_fields)
 
