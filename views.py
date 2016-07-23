@@ -9,6 +9,8 @@
 # http://www.opensource.org/licenses/mit-license
 
 from django.http import HttpResponse, Http404
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
 from django.shortcuts import render, get_object_or_404
 from django.db import IntegrityError, DatabaseError, ProgrammingError
 from django.views.decorators.csrf import csrf_exempt
@@ -20,6 +22,7 @@ import codecs
 import os.path, json, datetime
 import urllib.request
 from .models import Quote
+# from .models import URL
 from neotext.lib.neotext_quote_context.url import URL
 from neotext.lib.neotext_quote_context.quote import Quote as QuoteLookup
 from neotext.settings import AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY, AMAZON_S3_BUCKET, AMAZON_S3_ENDPOINT
@@ -42,15 +45,54 @@ def index(request):
     return HttpResponse("Hello, world. \
         You're at the neotext webservice homepage.")
 
-def post(request):
-    url_post = request.POST.get('url', '')
-    url = URL(url_post)
-    url.save_json_locally()
+def url_quotes(request, url):
+    #url = 'http://'.join(url)
+    url = 'http://www.openpolitics.com/2016/05/13/ted-nelson-philosophy-of-hypertext/'
+    quotes = Quote.objects.filter(cited_url=url)
 
-
-    template = get_template('post.html')
+    template = get_template('url_quotes.html')
     context = Context({
         'url': url,
+        'quotes' : quotes,
+    })
+    html = template.render(context)
+    return HttpResponse(html)
+
+def quote(request, sha1):
+    quote = Quote.objects.get(sha1=sha1)
+
+    template = get_template('quote.html')
+    context = Context({
+        'quote' : quote,
+    })
+    html = template.render(context)
+    return HttpResponse(html)
+
+def post_url(request):
+    quotes = []
+    posted_url = request.POST.get('url', '')
+
+    # Test if URL Is Valid
+    url_is_valid = True # Assume true
+    url_validator = URLValidator()
+    try:
+        url_validator(posted_url)
+    except ValidationError:
+        url_is_valid = False
+
+    # Save JSON for all citations in URL, retrieve quotes
+    url = None
+    if url_is_valid:
+        url = (posted_url)
+        url.publish_citations()
+        quotes = Quote.objects.filter(citing_url=posted_url)
+
+    template = get_template('post_url.html')
+    context = Context({
+        'url': url,
+        'url_is_valid': url_is_valid,
+        'posted_url' : posted_url,
+        'quotes' : quotes,
     })
     html = template.render(context)
     return HttpResponse(html)
@@ -94,7 +136,7 @@ def quote_index_html(request, sha1):
     )
 
 @csrf_exempt
-def quote_index_json(request, sha1=None):
+def quote_json(request, sha1=None):
     """ Lookup context from POSTed quote and url
     Save resulting json file to Amazon S3
 

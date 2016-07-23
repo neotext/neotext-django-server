@@ -20,13 +20,18 @@ __copyright__ = "Copyright (C) 2015-2016 Tim Langeman"
 __license__ = "MIT"
 __version__ = "0.2"
 
+
 urlpatterns = patterns(
     '',
     url(r'^$', views.index, name='index'),
-    url(r'^post/$', views.post, name='post'),
-    url(r'^quote/$', views.quote_index_json, name='quote_demo'),
+    url(r'^post/$', views.post_url, name='post_url'),
+    url(r'^$url/(?P<url>\d+)/$', views.url_quotes, name='url_quotes'),
+    url(r'^url/(?P<url>(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)$',
+        views.url_quotes, name='url_quotes'),
+    url(r'^quote/sha1/(?P<sha1>[a-fA-F\d]{40})$',
+        views.quote, name='quote'),
     url(r'^quote/sha1/(?P<sha1>[a-fA-F\d]{40}).json$',
-        views.quote_index_json, name='quote_index_json'),
+        views.quote_json, name='quote_json'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^demo/$', views.demo, name='demo'),
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
