@@ -213,6 +213,8 @@ class Quote(models.Model):
         return filename
 
     def is_published(self):
+
+        # Get JSON file from remote URL
         public_json_url = self.json_url()
         try:
             public_json_binary = urlopen(public_json_url).read()
@@ -239,7 +241,7 @@ class Quote(models.Model):
         """ json-encoded version of dictionary """
         json_fields = {}
         all_data = self.__dict__
-        for field in self.json_fields:
+        for field in self.json_fields():
             json_fields[field] = all_data[field]
         return json_lib.dumps(json_fields)
 

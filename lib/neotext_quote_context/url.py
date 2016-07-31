@@ -9,14 +9,12 @@
 # http://www.opensource.org/licenses/mit-license
 
 from neotext.models import Quote as QuoteModel
-from django.db.utils import IntegrityError
 from neotext.lib.neotext_quote_context.quote import Quote as QuoteLookup
 from neotext.lib.neotext_quote_context.document import Document
 from bs4 import BeautifulSoup
 from neotext.settings import NUM_DOWNLOAD_PROCESSES
 from multiprocessing import Pool
 import time
-# import pdb
 
 __author__ = 'Tim Langeman'
 __email__ = "timlangeman@gmail.com"
@@ -42,7 +40,7 @@ class URL:
         return raw
 
     def doc_type(self):
-        return 'html'  # hard-coded
+        return 'html'  # hard-coded.  Todo: pdf, text
 
     def html(self):
         html = ''
@@ -68,11 +66,10 @@ class URL:
                 cite_urls[cite.get('cite')] = cite.text
         return cite_urls
 
-    def citations_list_dict(self):
+    def citations_list(self):
         """ Create list of quote dictionaries """
         citations_list = []
-
-        for cited_url, citing_quote in self.citation_urls().items():
+        for citing_quote, cited_url in self.citation_urls().items():
             quote = {}
             quote['citing_quote'] = citing_quote
             quote['citing_url'] = cited_url
@@ -80,29 +77,32 @@ class URL:
             citations_list.append(quote)
         return citations_list
 
-    def publish_citations(self, update=True):
+    def publish_citations(self):
+        """ Save quote data to database and publish json """
         print("Publishing citations ..")
-        update = True
-        citations_data_list = self.citations(update)
-        return citations_data_list
+        for quote_dict in self.citations():
+            print("Found data: " + quote_dict['citing_url'])
+            q_tuple = QuoteModel.objects.update_or_create(
+                sha1=quote_dict['sha1'],
+                defaults=quote_dict
+            )
+            q = q_tuple[0]
+            q = q.save()
+            q.publish_json()
 
-    def citations(self, update=False):
-        """ Returns a list of Quote keys for all citations on this page
+    def citations(self):
+        """ Returns a list of Quote Lookup results for all citations on this page
             Uses asycnronous pool to achieve parallel processing
+            calls 'load_quote_data' function
+            for all values in self.citations_list
+            using python 'map' function
         """
         result_list = []
-
-        if update:
-            quote_function = publish_quote
-        else:
-            quote_function = load_quote_data
-
         print("Looking up citations: ")
         pool = Pool(processes=NUM_DOWNLOAD_PROCESSES)
-
         try:
             result_list = pool.map(
-                quote_function, self.citations_list_dict()
+                load_quote_data, self.citations_list()
             )
         except ValueError:
             print("Skipping map value ..")
@@ -114,47 +114,10 @@ class URL:
 
 def load_quote_data(quote_keys):
     """ lookup quote data, from keys """
-    """
-    quote_keys = {}
-    quote_keys['citing_quote'] = "somewhat inspired and sweeping, but not fully baked"
-    quote_keys['citing_url'] = "http://www.openpolitics.com/2016/05/13/ted-nelson-philosophy-of-hypertext/"
-    quote_keys['cited_url'] = "http://www.openpolitics.com/links/philosophy-of-hypertext-ted-nelson-pg-26/"
-    """
     print("Downloading: " + quote_keys['citing_url'])
     quote = QuoteLookup(
                 quote_keys['citing_quote'],
                 quote_keys['citing_url'],
                 quote_keys['cited_url']
             )
-    quote_dict = quote.data()
-    print("  found: quote dict data")
-    return quote_dict
-
-
-def publish_quote(quote_keys):
-    """ Updating db, local json, and cloud json .. """
-    print("Saving model")
-
-    filename = ''
-    quote_dict = load_quote_data(quote_keys)
-    print("Found data: " + quote_dict['citing_url'])
-    try:
-        q = QuoteModel(**quote_dict)
-        q = q.save()
-    except IntegrityError:
-        print("  except IntegrityError")
-        quote = QuoteModel.objects.filter(sha1=quote_dict['sha1'])
-        q = quote.update(**quote_dict)
-
-    # Get the record to pass on
-    q = QuoteModel.objects.get(sha1=quote_dict['sha1'])
-
-    print("  saved quote.  Does q exist?")
-    try:
-        print("Found q id = " + str(q.id))
-        filename = q.publish_json()
-        return filename
-
-    except AttributeError:  # 'NoneType' object has no attribute 'id'
-        print("    -unable to save quote. q doesn't exist")
-        return ''
+    return quote.data()
