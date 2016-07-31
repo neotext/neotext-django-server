@@ -83,10 +83,10 @@ def post_url(request):
     # Save JSON for all citations in URL, retrieve quotes
     url = None
     if url_is_valid:
-        url = (posted_url)
+        url = URL(posted_url)
         url.publish_citations()
-        quotes = Quote.objects.filter(citing_url=posted_url)
 
+    quotes = Quote.objects.filter(citing_url=posted_url)
     template = get_template('post_url.html')
     context = Context({
         'url': url,

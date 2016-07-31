@@ -1,45 +1,37 @@
-<html>
-<body>
+{% extends 'base.html' %}
+{% load neotext_filters %}
+{% block title %}Neotext.net : {% endblock %}
 
-  <style>
-    div.cited_before, div.citing_before,
-    div.cited_after, div.citing_after {
-      float: left;
-      width: 40%;
-      color: #999;
-      margin: 5%;
-    }
-    blockquote {
-      clear: left;
-      width: 80%;
-      font-size: 110%;
-      color: #000;
-    }
+{% block breadcrumbs %}
+   <a href="/url/">url</a> &gt; <a href="www.openpolitics.com/2016/05/13/ted-nelson-philosophy-of-hypertext/">
+     www.openpolitics.com</a>
+{% endblock %}
 
-  </style>
+{% block content %}
 
-{% if url %}
+  {% if url %}
 
-  <h2>Citations Found</h2>
-  {% for quote in quotes %}
+    {% for quote in quotes %}
 
-    <div class="cited_before"><h3>Source:
-      <a href="{{quote.cited_url}}">{{quote.cited_url}}</a></h3>
-      {{ quote.cited_context_before }}
-    </div>
-    <div class="citing_before"><h3>Source:
-      <a href="{{quote.citing_url}}">{{quote.citing_url}}</a></h3>
-      {{ quote.citing_context_before }}
-    </div>
+      <div class="cited_before"><h3>Source:
+        <a href="{{quote.cited_url}}">{{quote.cited_url|get_url_domain}}</a></h3>
+        {{ quote.cited_context_before }}
+      </div>
+      <div class="citing_before"><h3>Source:
+        <a href="{{quote.citing_url}}">{{quote.citing_url|get_url_domain}}</a></h3>
+        {{ quote.citing_context_before }}
+      </div>
 
-    <blockquote>{{ quote.citing_quote }}
-      <a href="{{ quote.cited_url }}"></a>
-    </blockquote>
-    <div class="cited_after">{{ quote.cited_context_after}}</div>
-    <div class="citing_after">{{ quote.citing_context_after}}</div>
-  {% endfor %}
+      <blockquote>{{ quote.citing_quote }}
+        <a href="{{ quote.cited_url }}"></a>
+      </blockquote>
+      <div class="cited_after">{{ quote.cited_context_after}}</div>
+      <div class="citing_after">{{ quote.citing_context_after}}</div>
+    {% endfor %}
 
-{% else %}
-  No citations found
+  {% else %}
+    No citations found
 
-{% endif %}
+  {% endif %}
+
+{% endblock %}
