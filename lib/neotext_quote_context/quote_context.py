@@ -71,7 +71,10 @@ class QuoteContext:
             self.quote,
             self.estimated_starting_location()
         )
-        return quote_start_position
+        if (quote_start_position >= 0):
+            return quote_start_position
+        else:
+            return -1
 
     @lru_cache(maxsize=8)
     def data(self):
@@ -85,8 +88,8 @@ class QuoteContext:
             'context_before': '',
             'context_quote': '',
             'context_after': '',
-            'context_start_position': '',
-            'context_end_position': '',
+            'context_start_position': -1,
+            'context_end_position': -1,
         }
 
         if quote_start_position <= 0:
