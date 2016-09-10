@@ -1,24 +1,79 @@
-<html>
-<body>
+{% extends "base.html" %}
+{% block title %}Generate Neotext for your website{% endblock %}
+{% block content %}<a name="generate"></a>
+
 
 {% if quotes %}
   <h2>Citations Found</h2>
   {% for quote in quotes %}
-    <a href="{{ quote.cited_url }}">{{ quote.cited_url }}</a>
-    {{ quote.citing_quote }}
-    {{ quote.sha1 }}
+    <p><a href="{{ quote.cited_url }}">{{ quote.cited_url }}</a></p>
+    <blockquote>{{ quote.citing_quote }}</blockquote>
+    <p>{{ quote.json_url }}</p>
   {% endfor %}
 
 {% endif %}
 
-<h1>Submit a URL</h1>
+<h1>Generate a new Neotext</h1>
+<p>Enter the URL of a page that has "cite" attributes:</p>
 <form method="post" action="">
   URL:
-  <input type="text" name="url" />
-  <input type="submit" value="submit" />
+  <input id="generate_neotext" type="text" name="url" />
+  <input type="submit" value="create" />
 </form>
+
+
+<div id="how_it_works">
+
+  <h2>Learn How it Works</h2>
+
+  <ol id="neotext_steps">
+    <li>Add this snippet of javascript to the footer of your page:
+
+
+    </li>
+
+    <li>Create a webpage with a citation, using the "cite" attribute with either
+      the "<strong>blockquote</strong>" or "<strong>q</strong>" tag.
+
+      <h3 id="examples">examples:</h3>
+
+      <h4 id="blockquote-tag">"blockquote" tag</h4>
+
+      <script src="https://gist.github.com/timlangeman/1ca6b5d40ae72fa587eda7cd33264315.js"></script>
+
+      <p>Neotext can add context above and below the passage: (click arrows)</p>
+      <blockquote cite="https://www.biblegateway.com/passage/?search=John+1&version=NRSV">
+        In the beginning was the Word, and the Word was with God,
+        and the Word was God.
+        2 He was in the beginning with God.
+        3 All things came into being through him,
+        and without him not one thing came into being.
+        What has come into being 4 in him was life,[a]
+        and the life was the light of all people.
+      </blockquote>
+
+      <h4 id="q-tag">"q" tag</h4>
+      <script src="https://gist.github.com/timlangeman/ea0386005e59bbf95cbd211f0ce5141f.js"></script>
+      <p>Neotext adds contextual popups to "q" tags that use the "cite" attribute.
+        Hover over the underlined red for the popup:</p>
+
+      <p>Matthew 5 says: <q cite=”https://www.biblegateway.com/passage/?search=Matthew+5″>Love your enemies</q>,
+      but like the Lawyer asking <q cite="https://www.biblegateway.com/passage/?search=Luke+10%3A25-37&version=NRSV">who is my neighbor?</q>,
+      many try to redefine the words "love" and "neighbor" in narrow ways.
+      </p>
+
+    </li>
+
+    <li>Enter the url for your page in the "Generate a new Neotext" section
+      <a href="#generate">at the top of the page</a>.
+    </li>
+
+    <li>Reload your page.  Your citations should now be neotextified!</li>
+
+  </ol>
+
+</div>
 
 {{ posted_url }}
 
-</body>
-</html>
+{% endblock %}

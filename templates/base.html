@@ -23,11 +23,19 @@
 		<link rel="stylesheet" id="dashicons-css" href="http://www.neotext.net/wp-includes/css/dashicons.min.css?ver=4.2.9" type="text/css" media="all" />
 		<link rel="stylesheet" id="minimum-google-fonts-css" href="//fonts.googleapis.com/css?family=Roboto%3A300%2C400%7CRoboto+Slab%3A300%2C400&#038;ver=3.0.1" type="text/css" media="all" />
 		<link rel="stylesheet" id="mailchimp-for-wp-form-css" href="http://www.neotext.net/wp-content/plugins/mailchimp-for-wp/assets/css/form.min.css?ver=2.3.7" type="text/css" media="all" />
-		<script type="text/javascript" src="http://www.neotext.net/wp-includes/js/jquery/jquery.js?ver=1.11.2"></script>
+
+    <script type='text/javascript' src='http://www.openpolitics.com/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+    <script type='text/javascript' src='http://www.openpolitics.com/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+    <script type='text/javascript' src='http://www.openpolitics.com/wp-content/plugins/neotext/lib/sha1.js?ver=4.6.1'></script>
+    <script type='text/javascript' src='http://www.openpolitics.com/wp-content/plugins/neotext/js/neotext-quote-context.js?ver=4.6.1'></script>
+
+<!--
+    <script type="text/javascript" src="http://www.neotext.net/wp-includes/js/jquery/jquery.js?ver=1.11.2"></script>
 		<script type="text/javascript" src="http://www.neotext.net/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.2.1"></script>
-		<script type="text/javascript" src="http://www.neotext.net/wp-content/plugins/easy-social-icons/js/cnss.js?ver=1.0"></script>
 		<script type="text/javascript" src="http://www.neotext.net/wp-content/plugins/neotext/lib/sha1.js?ver=4.2.9"></script>
 		<script type="text/javascript" src="http://www.neotext.net/wp-content/plugins/neotext/js/neotext-quote-context.js?ver=4.2.9"></script>
+-->
+    <script type="text/javascript" src="http://www.neotext.net/wp-content/plugins/easy-social-icons/js/cnss.js?ver=1.0"></script>
 		<script type="text/javascript" src="http://www.neotext.net/wp-content/themes/minimum-pro/js/responsive-menu.js?ver=1.0.0"></script>
 		<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.neotext.net/xmlrpc.php?rsd" />
 		<script type="text/javascript"></script><link rel="Shortcut Icon" href="http://www.neotext.net/wp-content/themes/minimum-pro/images/favicon.ico" type="image/x-icon" />
@@ -51,9 +59,32 @@
 		      color: #000;
 		      margin: auto;
 		    }
-
         div.cited_before {
           clear: left;
+        }
+        div#how_it_works {
+          margin-top: 100px;
+        }
+        ol#neotext_steps li {
+          margin-bottom: 30px;
+        }
+
+        h3#examples {
+          margin-top:40px;
+          font-size: 140%;
+        }
+        h4#blockquote-tag, h4#q-tag {
+          margin-top: 30px;
+        }
+
+        ul#submission_history {
+          margin-bottom: 100px;
+        }
+        input#generate_neotext {
+          width: 65%;
+        }
+        input#input#mc4wp_email {
+          width: 250px;
         }
 
 		</style>
@@ -110,8 +141,8 @@
 	</article>
 	</main>
 	<aside class="sidebar sidebar-primary widget-area" role="complementary" itemscope="itemscope" itemtype="http://schema.org/WPSideBar">
-	<section id="search-3" class="widget widget_search"><div class="widget-wrap"><form method="get" class="search-form" action="http://www.neotext.net/" role="search"><input type="search" name="s" placeholder="Search this website&#x2026;" /><input type="submit" value="Search" /></form></div></section><section id="cnss_widget-2" class="widget widget_cnss_widget"><div class="widget-wrap"><h4 class="widget-title widgettitle">Ways to Connect:</h4>
-									<ul class="cnss-social-icon" style="text-align:center;"><li class="Github" style=" display:inline-block;"><a target="_blank" title="Github" href="https://github.com/neotext/neotext-quote-context"><img src="http://www.neotext.net/wp-content/uploads/2015/07/github-64-black.png" border="0" width="64" height="64" alt="Github" style=" margin:2px;" /></a></li><li class="Email-Tim" style=" display:inline-block;"><a target="_blank" title="Email Tim" href="http://openpolitics.com/tim"><img src="http://www.neotext.net/wp-content/uploads/2015/07/email-64-black.png" border="0" width="64" height="64" alt="Email Tim" style=" margin:2px;" /></a></li><li class="RSS" style=" display:inline-block;"><a target="_blank" title="RSS" href="http://www.neotext.net/feed/"><img src="http://www.neotext.net/wp-content/uploads/2015/07/rss-64-black.png" border="0" width="64" height="64" alt="RSS" style=" margin:2px;" /></a></li></ul></div></section><section id="mc4wp_widget-2" class="widget widget_mc4wp_widget"><div class="widget-wrap"><h4 class="widget-title widgettitle">Sign up for the Newsletter:</h4>
+	<section id="search-3" class="widget widget_search"><div class="widget-wrap"><div class="widget-wrap"><h4>Ways to Connect:</h4>
+									<ul class="cnss-social-icon" style="text-align:center;"><li class="Github" style=" display:inline-block;"><a target="_blank" title="Github" href="https://github.com/neotext/neotext-quote-context"><img src="http://www.neotext.net/wp-content/uploads/2015/07/github-64-black.png" border="0" width="64" height="64" alt="Github" style=" margin:2px;" /></a></li><li class="Email-Tim" style=" display:inline-block;"><a target="_blank" title="Email Tim" href="http://openpolitics.com/tim"><img src="http://www.neotext.net/wp-content/uploads/2015/07/email-64-black.png" border="0" width="64" height="64" alt="Email Tim" style=" margin:2px;" /></a></li><li class="RSS" style=" display:inline-block;"><a target="_blank" title="RSS" href="http://www.neotext.net/feed/"><img src="http://www.neotext.net/wp-content/uploads/2015/07/rss-64-black.png" border="0" width="64" height="64" alt="RSS" style=" margin:2px;" /></a></li></ul></div></section><section id="mc4wp_widget-2" class="widget widget_mc4wp_widget"><div class="widget-wrap"><h4>Sign up for the Newsletter:</h4>
 									<div id="mc4wp-form-1" class="form mc4wp-form"><form method="post" role="form"><p>
 												<label>email address: </label>
 												<input type="email" id="mc4wp_email" name="EMAIL" placeholder="Your email address" required />
@@ -124,25 +155,16 @@
 
 	<section id="recent-posts-3" class="widget widget_recent_entries">
 
-		<div class="widget-wrap"><h4 class="widget-title widgettitle">Recent Posts</h4>
+		<div class="widget-wrap"><h4>Recent Neotexts</h4>
 
-									<ul>
+									<ul id="submission_history">
 										<li>
-											<a href="http://www.neotext.net/2016/06/06/django-backend-now-uploads-to-amazon-s3/">Django backend now uploads to Amazon S3</a>
-										</li>
-										<li>
-											<a href="http://www.neotext.net/2016/06/06/github-projects-created-under-mit-license/">Github projects created under MIT license</a>
-										</li>
-										<li>
-											<a href="http://www.neotext.net/2015/10/20/presentation-at-central-pa-open-source-conference/">Presentation at Central PA Open Source Conference</a>
-										</li>
-										<li>
-											<a href="http://www.neotext.net/2015/08/14/creating-wordpress-tinymce-custom-buttons/">Creating WordPress Tinymce Custom Buttons</a>
-										</li>
-										<li>
-											<a href="http://www.neotext.net/2015/07/21/newsletter-created/">Newsletter Created</a>
+											<a href="http://www.openpolitics.com/2015/01/03/open-source-media/">www.openpolitics.com</a>
 										</li>
 									</ul>
+
+
+                  <a href="#">View List of All Submissions</a>
 
 	</div></section>
 	</aside></div></div></div>
