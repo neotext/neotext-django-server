@@ -231,6 +231,7 @@ class Quote(models.Model):
 
     def json_fields(self):
         return [
+            'sha1',
             'cited_url', 'citing_url',
             'cited_context_before', 'cited_context_after',
             'citing_context_before', 'citing_context_after',

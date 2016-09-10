@@ -72,7 +72,7 @@ class Quote:
 
     def hash(self):
         """
-            Generate has of the key, based on hash algorith (sha1)
+            Generate hash of the key, based on hash algorith (sha1)
         """
         hash_method = getattr(hashlib, HASH_ALGORITHM)
         hash_text = self.hashkey()
