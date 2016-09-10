@@ -1,7 +1,14 @@
 {% extends "base.html" %}
-{% block title %}Generate Neotext for your website{% endblock %}
+{% block title %}Generate Neotext for your website: contextual citation{% endblock %}
 {% block content %}<a name="generate"></a>
 
+<h1>Generate a new Neotext</h1>
+<p>Enter the URL of a page that has "cite" attributes:</p>
+<form method="post" action="">
+  URL:
+  <input id="generate_neotext" type="text" name="url" />
+  <input type="submit" value="create" />
+</form>
 
 {% if quotes %}
   <h2>Citations Found</h2>
@@ -13,23 +20,13 @@
 
 {% endif %}
 
-<h1>Generate a new Neotext</h1>
-<p>Enter the URL of a page that has "cite" attributes:</p>
-<form method="post" action="">
-  URL:
-  <input id="generate_neotext" type="text" name="url" />
-  <input type="submit" value="create" />
-</form>
-
-
 <div id="how_it_works">
 
   <h2>Learn How it Works</h2>
 
   <ol id="neotext_steps">
-    <li>Add this snippet of javascript to the footer of your page:
-
-
+    <li><p>Add these snippet of javascript to the footer of your page:</p>
+      <script src="https://gist.github.com/timlangeman/0e5235136803774d28d1b0d922e48033.js"></script>
     </li>
 
     <li>Create a webpage with a citation, using the "cite" attribute with either
