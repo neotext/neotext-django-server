@@ -23,8 +23,8 @@ __version__ = "0.2"
 
 urlpatterns = patterns(
     '',
-    url(r'^$', views.index, name='index'),
-    url(r'^post/$', views.post_url, name='post_url'),
+    url(r'^post/', views.index, name='index'),
+    url(r'^$', views.post_url, name='post_url'),
     url(r'^$url/(?P<url>\d+)/$', views.url_quotes, name='url_quotes'),
     url(r'^url/(?P<url>(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)$',
         views.url_quotes, name='url_quotes'),
