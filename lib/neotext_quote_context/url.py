@@ -69,11 +69,11 @@ class URL:
     def citations_list(self):
         """ Create list of quote dictionaries """
         citations_list = []
-        for citing_quote, cited_url in self.citation_urls().items():
+        for cited_url, citing_quote in self.citation_urls().items():
             quote = {}
             quote['citing_quote'] = citing_quote
-            quote['citing_url'] = cited_url
-            quote['cited_url'] = self.url
+            quote['citing_url'] = self.url
+            quote['cited_url'] = cited_url
             citations_list.append(quote)
         return citations_list
 
@@ -81,14 +81,25 @@ class URL:
         """ Save quote data to database and publish json """
         print("Publishing citations ..")
         for quote_dict in self.citations():
-            print("Found data: " + quote_dict['citing_url'])
-            q_tuple = QuoteModel.objects.update_or_create(
-                sha1=quote_dict['sha1'],
-                defaults=quote_dict
+            print("Found data: " + quote_dict['cited_url'])
+            sha1 = quote_dict['sha1']
+            quote_dict_defaults = quote_dict
+            # quote_dict_defaults['sha1'] = sha1
+            quote_dict_defaults.pop('sha1')  # remove sha1 key
+            q, created = QuoteModel.objects.update_or_create(
+                sha1=sha1,
+                defaults=quote_dict_defaults
             )
-            q = q_tuple[0]
-            q = q.save()
-            q.publish_json()
+            try:
+                if q:
+                    q.publish_json()
+                else:
+                    print("Unable to publish: " + quote_dict['cited_url'])
+
+            except ValueError:
+                print("Error publishing: " + quote_dict['cited_url'])
+
+            print("Published: " + quote_dict['cited_url'])
 
     def citations(self):
         """ Returns a list of Quote Lookup results for all citations on this page
@@ -98,6 +109,18 @@ class URL:
             using python 'map' function
         """
         result_list = []
+        for quote_keys in self.citations_list():
+            print('Looking up: ' + quote_keys['cited_url'])
+            quote = QuoteLookup(
+                        quote_keys['citing_quote'],
+                        quote_keys['citing_url'],
+                        quote_keys['cited_url']
+                    )
+            result_list.append(quote.data())
+
+        return result_list  # citations_data_list
+
+        """
         print("Looking up citations: ")
         pool = Pool(processes=NUM_DOWNLOAD_PROCESSES)
         try:
@@ -106,10 +129,11 @@ class URL:
             )
         except ValueError:
             print("Skipping map value ..")
+            pass
 
         pool.close()
         print("finished citations.")
-        return result_list  # citations_data_list
+        """
 
 
 def load_quote_data(quote_keys):
