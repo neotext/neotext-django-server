@@ -45,7 +45,7 @@ class Quote:
         citing_quote,  # excerpt from citing document
         citing_url,	  # url of the document that is doing the quoting
         cited_url,  # url of document that is being quoted
-        text_output=True,  # output computed text version of url's html
+        text_output=False,  # output computed text version of url's html
         raw_output=True,  # output full html/pdf source of cited url
         prior_quote_context_length=500,  # length of excerpt before quote
         after_quote_context_length=500,  # length of excerpt after quote

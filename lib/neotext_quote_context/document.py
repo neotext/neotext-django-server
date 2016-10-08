@@ -9,7 +9,7 @@
 # http://www.opensource.org/licenses/mit-license
 
 from bs4 import BeautifulSoup
-from urllib.request import urlopen, HTTPError
+from urllib.request import urlopen, HTTPError, URLError
 from functools import lru_cache
 import re
 
@@ -21,6 +21,7 @@ __email__ = "timlangeman@gmail.com"
 __copyright__ = "Copyright (C) 2015-2016 Tim Langeman"
 __license__ = "MIT"
 __version__ = "0.2"
+
 
 class Document:
     """ Looks up url and computes plain-text version of document
@@ -44,9 +45,11 @@ class Document:
     def raw(self):
         logger.debug('Downloading ' + self.url)
         try:
+            # url = parse.quote(self.url)
+            # url = url.strip('\'"')
             raw = urlopen(self.url).read()
             return raw  # .decode('utf-8')
-        except HTTPError:
+        except (HTTPError, URLError):
             return ""
 
     def html(self):
@@ -128,6 +131,7 @@ def normalize_whitespace(str):
 
 
 def visible(element):
+
     """Exclude non-visible html content from text-only version
       * Credit: http://stackoverflow.com/questions/1936466/beautifulsoup-grab-visible-webpage-text
       * Profile: http://stackoverflow.com/users/230636/jbochi

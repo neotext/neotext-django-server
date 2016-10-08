@@ -11,6 +11,7 @@
 from neotext.models import Quote as QuoteModel
 from neotext.lib.neotext_quote_context.quote import Quote as QuoteLookup
 from neotext.lib.neotext_quote_context.document import Document
+from django.utils.encoding import DjangoUnicodeDecodeError
 from bs4 import BeautifulSoup
 from neotext.settings import NUM_DOWNLOAD_PROCESSES
 from multiprocessing import Pool
@@ -83,13 +84,18 @@ class URL:
         for quote_dict in self.citations():
             print("Found data: " + quote_dict['cited_url'])
             sha1 = quote_dict['sha1']
-            quote_dict_defaults = quote_dict
-            # quote_dict_defaults['sha1'] = sha1
-            quote_dict_defaults.pop('sha1')  # remove sha1 key
-            q, created = QuoteModel.objects.update_or_create(
-                sha1=sha1,
-                defaults=quote_dict_defaults
-            )
+            
+            try:
+              quote_dict_defaults = quote_dict
+              quote_dict_defaults.pop('sha1')  # remove sha1 key
+              q, created = QuoteModel.objects.update_or_create(
+                  sha1=sha1,
+                  defaults=quote_dict_defaults
+              )
+            except DjangoUnicodeDecodeError:
+              print("Unicode error: todo fix")
+              return False
+
             try:
                 if q:
                     q.publish_json()
