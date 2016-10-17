@@ -107,7 +107,7 @@ class Quote:
         cited_doc = Document(self.cited_url)
 
         # Populate context fields with Document methods
-        document_fields = ['doc_type']
+        document_fields = ['doc_type', 'text']
         quote_context_fields = [
             'context_before', 'context_after',  # 'quote',
             'quote_length',
@@ -120,8 +120,8 @@ class Quote:
             data_dict['citing_raw'] = citing_doc.raw()
             data_dict['cited_raw'] = cited_doc.raw()
 
-        if self.text_output:
-            quote_context_fields.append('text')
+        # if self.text_output:
+        #    quote_context_fields.append('text')
 
         for doc_field in document_fields:
             citing_field = ''.join(['citing_', doc_field])
