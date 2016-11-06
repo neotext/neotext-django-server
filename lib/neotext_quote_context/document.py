@@ -9,8 +9,9 @@
 # http://www.opensource.org/licenses/mit-license
 
 from bs4 import BeautifulSoup
-from urllib.request import urlopen, HTTPError
 from functools import lru_cache
+import requests
+import html
 import re
 
 import logging
@@ -44,8 +45,9 @@ class Document:
     def raw(self):
         logger.debug('Downloading ' + self.url)
         try:
-            raw = urlopen(self.url).read()
-            return raw  # .decode('utf-8')
+            headers = {'user-agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0'}
+            r = requests.get(self.url, headers=headers)
+            return r.text
         except HTTPError:
             return ""
 
@@ -58,28 +60,29 @@ class Document:
     @lru_cache(maxsize=8)
     def text(self):
         """convert html to plaintext"""
-        text = ''
 
         if self.doc_type() == 'html':
             soup = BeautifulSoup(self.html(), "html.parser")
-            # texts = soup.findAll(text=True)
-            # visible_texts = filter(visible, texts)
-            # text = ''.join(visible_texts)
+            invisible_tags = ['style', 'script', '[document]', 'head', 'title']
+            for elem in soup.findAll(invisible_tags):
+                elem.extract()  # hide javascript, css, etc
+
             text = soup.get_text()
             text = normalize_whitespace(text)
+            return html.unescape(text)     # escape html entities
 
         elif self.doc_type == 'pdf':
             # use: https://github.com/euske/pdfminer/
-            text = "not implemented"
+            return "not implemented"
 
         elif self.doc_type == 'doc':
             # https://github.com/deanmalmgren/textract
-            text = "not implemented"
+            return "not implemented"
 
         elif self.doc_type == 'text':
-            text = self.raw()
+            return self.raw()
 
-        return text
+        return 'error: no doc_type'
 
     def citation_urls(self):
         cite_urls = []
@@ -90,8 +93,10 @@ class Document:
         return cite_urls
 
     def citations(self):
+        pass
+        """
         for cited_url in self.citation_urls():
-            """
+
             q = Quote(
                 "citing_quote",  # todo: lookup
                 self.url,
@@ -99,8 +104,7 @@ class Document:
             )
             q.save_to_db()
             q.save_json_to_cloud()
-            """
-            pass
+        """
 
     def data(self):
         data = {}
@@ -120,19 +124,8 @@ def trim_encode(str):
 
 def normalize_whitespace(str):
     str = str.replace("&nbsp;", " ")
-    str = str.replace("\n", "")
     str = str.replace(u'\xa0', u' ')
+    # str = str.replace("\n", "")
     str = str.strip()
     str = re.sub(r'\s+', ' ', str)
     return str
-
-
-def visible(element):
-    """Exclude non-visible html content from text-only version
-      * Credit: http://stackoverflow.com/questions/1936466/beautifulsoup-grab-visible-webpage-text
-      * Profile: http://stackoverflow.com/users/230636/jbochi
-    """
-
-    return(element.parent.name in [
-        'style', 'script', '[document]', 'head', 'title'
-    ])

@@ -65,9 +65,9 @@ class Quote:
         """ The hash is based on a concatination of:
             citing_quote|citing_url|cited_url
         """
-        return ''.join([self.citing_quote, '|',
-                        self.citing_url, '|',
-                        self.cited_url
+        return ''.join([self.citing_quote.strip(), '|',
+                        self.citing_url.strip(), '|',
+                        self.cited_url.strip()
                         ])
 
     def hash(self):
