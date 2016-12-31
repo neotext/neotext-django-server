@@ -108,6 +108,7 @@ class URL:
             for all values in self.citations_list
             using python 'map' function
         """
+
         result_list = []
         for quote_keys in self.citations_list():
             print('Looking up: ' + quote_keys['cited_url'])
@@ -121,6 +122,7 @@ class URL:
         return result_list  # citations_data_list
 
         """
+
         print("Looking up citations: ")
         pool = Pool(processes=NUM_DOWNLOAD_PROCESSES)
         try:

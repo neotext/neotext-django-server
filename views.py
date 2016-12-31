@@ -46,7 +46,6 @@ def index(request):
         You're at the neotext webservice homepage.")
 
 def url_quotes(request, url):
-    #url = 'http://'.join(url)
     url = 'http://www.openpolitics.com/2016/05/13/ted-nelson-philosophy-of-hypertext/'
     quotes = Quote.objects.filter(cited_url=url)
 
@@ -57,6 +56,7 @@ def url_quotes(request, url):
     })
     html = template.render(context)
     return HttpResponse(html)
+
 
 def quote(request, sha1):
     quote = Quote.objects.get(sha1=sha1)

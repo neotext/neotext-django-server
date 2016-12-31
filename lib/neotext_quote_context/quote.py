@@ -14,6 +14,7 @@ from neotext.settings import HASH_ALGORITHM
 
 from functools import lru_cache
 import hashlib
+import html
 import time
 
 __author__ = 'Tim Langeman'
@@ -166,4 +167,7 @@ class Quote:
 # Non-class functions ####
 def trim_encode(content):
     content = content.strip()
-    return content
+    content = content.replace("&nbsp;", " ")
+    content = content.replace("\n", " ")
+    content = content.replace(u'\xa0', " ")
+    return html.unescape(content)

@@ -49,7 +49,7 @@ class Document:
             r = requests.get(self.url, headers=headers)
             return r.text
         except HTTPError:
-            return ""
+            return "document: HTTPError"
 
     def html(self):
         html = None
@@ -83,6 +83,20 @@ class Document:
             return self.raw()
 
         return 'error: no doc_type'
+
+    def canonical_url(self):
+        # Credit: http://pydoc.net/Python/pageinfo/0.40/pageinfo.pageinfo/
+
+        canonical_url = ""
+        if self.doc_type() == 'html':
+            soup = BeautifulSoup(self.raw())
+            canonical = soup.find("link", rel="canonical")
+            if canonical:
+                canonical_url = canonical['href']
+            else:
+                og_url = soup.find("meta", property="og:url")
+                canonical_url = og_url['content']
+        return canonical_url
 
     def citation_urls(self):
         cite_urls = []
@@ -125,7 +139,6 @@ def trim_encode(str):
 def normalize_whitespace(str):
     str = str.replace("&nbsp;", " ")
     str = str.replace(u'\xa0', u' ')
-    # str = str.replace("\n", "")
     str = str.strip()
     str = re.sub(r'\s+', ' ', str)
     return str

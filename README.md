@@ -1,4 +1,4 @@
-neotext-server
+neotext
 ===============
 
 An api server that:
@@ -6,7 +6,7 @@ An api server that:
      * url
      * quote
   * looks up the cited URL's html
-  * calculates the context surrounding the quote 
+  * calculates the context surrounding the quote
   * saves the contextual data to a database
   * saves the quote-context in json form to Amazon S3. (future)
   * returns quote-context in json form
@@ -30,5 +30,4 @@ v0.01 - initial release (not yet)
 
 ## Credits ##
 
-A shoutout to everyone who has contributed:
-
+Be the first contributor.  Your name here!
