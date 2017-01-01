@@ -126,10 +126,7 @@ class URL:
 
 def load_quote_data(citing_quote, citing_url, cited_url):
     """ lookup quote data, from keys """
-    # print("Downloading citation from: " + quote_keys['cited_url'])
-
-
-
+    print("Downloading citation from: " + cited_url)
     quote = QuoteLookup(
                 citing_quote,
                 citing_url,

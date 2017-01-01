@@ -8,6 +8,9 @@
 # The code for this server library is released under the MIT License:
 # http://www.opensource.org/licenses/mit-license
 
+import gevent.monkey
+gevent.monkey.patch_socket()
+
 from bs4 import BeautifulSoup
 from functools import lru_cache
 import requests
@@ -43,12 +46,12 @@ class Document:
 
     @lru_cache(maxsize=8)
     def raw(self):
-        logger.debug('Downloading ' + self.url)
+        print('Downloading ' + self.url)
         try:
             headers = {'user-agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0'}
             r = requests.get(self.url, headers=headers)
             return r.text
-        except HTTPError:
+        except requests.HTTPError:
             return "document: HTTPError"
 
     def html(self):
