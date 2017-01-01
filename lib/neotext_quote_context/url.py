@@ -8,12 +8,14 @@
 # The code for this server library is released under the MIT License:
 # http://www.opensource.org/licenses/mit-license
 
+
 from neotext.models import Quote as QuoteModel
 from neotext.lib.neotext_quote_context.quote import Quote as QuoteLookup
 from neotext.lib.neotext_quote_context.document import Document
 from bs4 import BeautifulSoup
 from neotext.settings import NUM_DOWNLOAD_PROCESSES
 from multiprocessing import Pool
+import gevent
 import time
 
 __author__ = 'Tim Langeman'
@@ -80,26 +82,29 @@ class URL:
     def publish_citations(self):
         """ Save quote data to database and publish json """
         print("Publishing citations ..")
+        if not self.citations():
+            return
         for quote_dict in self.citations():
-            print("Found data: " + quote_dict['cited_url'])
-            sha1 = quote_dict['sha1']
-            quote_dict_defaults = quote_dict
-            # quote_dict_defaults['sha1'] = sha1
-            quote_dict_defaults.pop('sha1')  # remove sha1 key
-            q, created = QuoteModel.objects.update_or_create(
-                sha1=sha1,
-                defaults=quote_dict_defaults
-            )
-            try:
-                if q:
-                    q.publish_json()
-                else:
-                    print("Unable to publish: " + quote_dict['cited_url'])
+            if quote_dict:
+                print("Found data: " + quote_dict['cited_url'])
+                sha1 = quote_dict['sha1']
+                quote_dict_defaults = quote_dict
+                # quote_dict_defaults['sha1'] = sha1
+                quote_dict_defaults.pop('sha1')  # remove sha1 key
+                q, created = QuoteModel.objects.update_or_create(
+                    sha1=sha1,
+                    defaults=quote_dict_defaults
+                )
+                try:
+                    if q:
+                        q.publish_json()
+                    else:
+                        print("Unable to publish: " + quote_dict['cited_url'])
 
-            except ValueError:
-                print("Error publishing: " + quote_dict['cited_url'])
+                except ValueError:
+                    print("Error publishing: " + quote_dict['cited_url'])
 
-            print("Published: " + quote_dict['cited_url'])
+                print("Published: " + quote_dict['cited_url'])
 
     def citations(self):
         """ Returns a list of Quote Lookup results for all citations on this page
@@ -108,42 +113,26 @@ class URL:
             for all values in self.citations_list
             using python 'map' function
         """
-
         result_list = []
-        for quote_keys in self.citations_list():
-            print('Looking up: ' + quote_keys['cited_url'])
-            quote = QuoteLookup(
-                        quote_keys['citing_quote'],
-                        quote_keys['citing_url'],
-                        quote_keys['cited_url']
-                    )
-            result_list.append(quote.data())
-
-        return result_list  # citations_data_list
-
-        """
-
-        print("Looking up citations: ")
-        pool = Pool(processes=NUM_DOWNLOAD_PROCESSES)
-        try:
-            result_list = pool.map(
-                load_quote_data, self.citations_list()
-            )
-        except ValueError:
-            print("Skipping map value ..")
-            pass
-
-        pool.close()
-        print("finished citations.")
-        """
+        result_list_values = [gevent.spawn(load_quote_data, **quote_keys)
+                              for quote_keys in self.citations_list()
+                              ]
+        gevent.joinall(result_list_values)
+        # Gevent results are accessed with .value   Package as list.
+        for result in result_list_values:
+            result_list.append(result.value)
+        return result_list
 
 
-def load_quote_data(quote_keys):
+def load_quote_data(citing_quote, citing_url, cited_url):
     """ lookup quote data, from keys """
-    print("Downloading: " + quote_keys['citing_url'])
+    # print("Downloading citation from: " + quote_keys['cited_url'])
+
+
+
     quote = QuoteLookup(
-                quote_keys['citing_quote'],
-                quote_keys['citing_url'],
-                quote_keys['cited_url']
+                citing_quote,
+                citing_url,
+                cited_url
             )
     return quote.data()

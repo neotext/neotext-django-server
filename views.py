@@ -69,6 +69,13 @@ def quote(request, sha1):
     return HttpResponse(html)
 
 def post_url(request):
+    """
+        Call URL.publish_citations()
+        Use gevent to handle concurrency
+    """
+    import gevent.monkey
+    gevent.monkey.patch_socket()
+
     quotes = []
     posted_url = request.POST.get('url', '')
 
@@ -86,6 +93,7 @@ def post_url(request):
         url = URL(posted_url)
         url.publish_citations()
 
+    # Query DB for published citations
     quotes = Quote.objects.filter(citing_url=posted_url)
     template = get_template('post_url.html')
     context = Context({
