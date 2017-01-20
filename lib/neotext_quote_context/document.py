@@ -8,11 +8,9 @@
 # The code for this server library is released under the MIT License:
 # http://www.opensource.org/licenses/mit-license
 
-import gevent.monkey
-gevent.monkey.patch_socket()
-
 from bs4 import BeautifulSoup
 from functools import lru_cache
+from django.core.cache import cache
 import requests
 import html
 import re
@@ -22,19 +20,42 @@ logger = logging.getLogger(__name__)
 
 __author__ = 'Tim Langeman'
 __email__ = "timlangeman@gmail.com"
-__copyright__ = "Copyright (C) 2015-2016 Tim Langeman"
+__copyright__ = "Copyright (C) 2015-2017 Tim Langeman"
 __license__ = "MIT"
 __version__ = "0.2"
 
+
 class Document:
     """ Looks up url and computes plain-text version of document
+        Uses caching to prevent repeated lookups
 
         Usage:
-        doc = Document('http://www.openpolitics.com/2016/05/13/ted-nelson-philosophy-of-hypertext/')
+        doc = Document('http://www.openpolitics.com/philosophy.html')
     """
 
     def __init__(self, url	):
         self.url = url
+
+    # @lru_cache(maxsize=8)
+    def raw(self):
+        cache_key = "text_" + self.url
+        text = cache.get(cache_key)
+        if text:
+            return text
+        else:
+            try:
+                headers = {'user-agent': 'Mozilla/5.0 (Windows NT 6.0;'
+                           ' WOW64; rv:24.0) Gecko/20100101 Firefox/24.0'}
+                r = requests.get(self.url, headers=headers)
+                text = r.text
+                cache.set(cache_key, text, 30)
+                print('Downloaded ' + self.url)
+                return r.text
+
+            except requests.HTTPError:
+                text = "document: HTTPError"
+                cache.set(cache_key, text, 10)
+                return text
 
     def doc_type(self):
         """ Todo: Distinguish between html, text, .doc, and pdf"""
@@ -44,18 +65,8 @@ class Document:
         # return doc_type
         return 'html'  # hardcode to html for now
 
-    @lru_cache(maxsize=8)
-    def raw(self):
-        print('Downloading ' + self.url)
-        try:
-            headers = {'user-agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0'}
-            r = requests.get(self.url, headers=headers)
-            return r.text
-        except requests.HTTPError:
-            return "document: HTTPError"
-
     def html(self):
-        html = None
+        html = ""
         if self.doc_type() == 'html':
             html = self.raw()
         return html
@@ -92,13 +103,14 @@ class Document:
 
         canonical_url = ""
         if self.doc_type() == 'html':
-            soup = BeautifulSoup(self.raw())
+            soup = BeautifulSoup(self.raw(), 'html.parser')
             canonical = soup.find("link", rel="canonical")
             if canonical:
                 canonical_url = canonical['href']
             else:
-                og_url = soup.find("meta", property="og:url")
-                canonical_url = og_url['content']
+                # og_url = soup.find("meta", property="og:url")
+                # canonical_url = og_url['content']
+                canonical_url = ''
         return canonical_url
 
     def citation_urls(self):
@@ -129,6 +141,7 @@ class Document:
         data['html'] = self.html()
         data['raw'] = self.raw()
         data['text'] = self.text()
+        data['canonical_url'] = self.canonical_url()
         return data
 
 # Non-class functions #######################

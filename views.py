@@ -73,8 +73,8 @@ def post_url(request):
         Call URL.publish_citations()
         Use gevent to handle concurrency
     """
-    import gevent.monkey
-    gevent.monkey.patch_socket()
+    # import gevent.monkey
+    # gevent.monkey.patch_socket()
 
     quotes = []
     posted_url = request.POST.get('url', '')

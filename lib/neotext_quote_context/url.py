@@ -20,7 +20,7 @@ import time
 
 __author__ = 'Tim Langeman'
 __email__ = "timlangeman@gmail.com"
-__copyright__ = "Copyright (C) 2015-2016 Tim Langeman"
+__copyright__ = "Copyright (C) 2015-2017 Tim Langeman"
 __license__ = "MIT"
 __version__ = "0.2"
 
@@ -86,7 +86,6 @@ class URL:
             return
         for quote_dict in self.citations():
             if quote_dict:
-                print("Found data: " + quote_dict['cited_url'])
                 sha1 = quote_dict['sha1']
                 quote_dict_defaults = quote_dict
                 # quote_dict_defaults['sha1'] = sha1
@@ -126,7 +125,7 @@ class URL:
 
 def load_quote_data(citing_quote, citing_url, cited_url):
     """ lookup quote data, from keys """
-    print("Downloading citation from: " + cited_url)
+    # print("Downloading citation from: " + cited_url)
     quote = QuoteLookup(
                 citing_quote,
                 citing_url,
