@@ -32,7 +32,9 @@
       <script src="https://gist.github.com/timlangeman/0e5235136803774d28d1b0d922e48033.js"></script>
 
       (<a download target="_blank" href="http://download.neotext.net/quote-context/neotext-sample.html"
-        > Download a Sample HTML Template</a>
+        > Download a Sample HTML Template</a> |
+        <a href="http://download.neotext.net/quote-context/neotext-sample.html"
+        >View Sample</a>
       )
     </li>
 
@@ -73,8 +75,29 @@
     </li>
 
     <li>Reload your page.  Your citations should now be neotextified!</li>
-
   </ol>
+
+  <a name="sample-code"></a>
+  <h3>Code Example:</h3>
+  <p>The code for displaying the looked-up information is part of a free open source jQuery plugin called <a href="https://github.com/timlangeman/quote-context/blob/master/js/quote-context.js">neotext-quote-context.js</a>, available as a <a href="http://www.neotext.net/wordpress-plugin/">wordpress</a> or <a href="http://www.neotext.net/code/">jQuery</a> plugin.</p>
+  <p><iframe src="https://player.vimeo.com/video/189252945" width="736" height="460" frameborder="0" allowfullscreen="allowfullscreen"></iframe></p>
+  <h4>Get simplified html source of this page</h4>
+  <ol>
+    <li><a href="http://www.neotext.net/neotext-sample.html" target="_blank" download="">Download neotext-sample.html</a>  (<a href="http://www.neotext.net/neotext-sample.html">view online</a>)</li>
+    <li>Save the html file to your server, giving it a unique name like:
+      <ul>
+        <li>http://your-domain.com/neotext-sample.html</li>
+      </ul>
+    </li>
+    <li>Generate the Neotext json file by <a href="http://write.neotext.net/">entering your page&#8217;s URL in the generator</a>.
+      <ul>
+        <li>a json file with be uploaded to Amazon S3 for each quote on the page.</li>
+      </ul>
+    </li>
+    <li>Reload your page. You should notice the arrows appear on the blockquote; and you should get a contextual popup if you click on &#8220;Love your enemies&#8221;.</li>
+  </ol>
+
+
 
 </div>
 
