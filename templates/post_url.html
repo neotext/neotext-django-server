@@ -9,6 +9,8 @@
   <input id="generate_neotext" type="text" name="url" />
   <input type="submit" value="create" />
 </form>
+<a id="download-template" href="http://download.neotext.net/quote-context/neotext-sample.html"
+  > Download a Sample HTML Template</a>
 
 {% if quotes %}
   <h2>Citations Found</h2>
@@ -25,8 +27,12 @@
   <h2>Learn How it Works</h2>
 
   <ol id="neotext_steps">
-    <li><p>Add these snippet of javascript to the footer of your page:</p>
+    <li><p>Add these snippets of javascript to the header and footer of your page:</p>
       <script src="https://gist.github.com/timlangeman/0e5235136803774d28d1b0d922e48033.js"></script>
+
+      (<a href="http://download.neotext.net/quote-context/neotext-sample.html"
+        > Download a Sample HTML Template</a>
+      )
     </li>
 
     <li>Create a webpage with a citation, using the "cite" attribute with either
