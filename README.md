@@ -1,7 +1,7 @@
 Neotext
 ===============
 
-An api server that:
+An API server that computes the context surrounding quotations on a submitted URL.
   * accepts quote POST requests from the client, of the form:
      * url
      * quote
@@ -44,5 +44,6 @@ An api server that:
 v0.01 - initial release
 
 ## Credits ##
+Created by Tim Langeman.  Inspired by Ted Nelson.
 
 Be the first contributor.  Your name here!
