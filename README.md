@@ -1,4 +1,4 @@
-neotext
+Neotext
 ===============
 
 An api server that:
@@ -11,7 +11,7 @@ An api server that:
   * uploads the quote-context json file to Amazon S3.
 
 ## Setup ##
-  * Make sure you have Python 3.4 or higher
+  * Python 3.4 or higher is required
   * Clone the Git Repository:
     - git clone https://github.com/neotext/neotext-django-server.git
   * Setup Virtual Environment:
@@ -20,21 +20,22 @@ An api server that:
       3. source venv/bin/activate
   * In main folder containing requirements.txt:
       - pip install -r requirements.txt
-  * add your own neotext folder to the python path
+  * Add your own neotext folder to the python path
 	 - export PYTHONPATH="$PYTHONPATH:/home/timlangeman/webapps/neotext/neotext"
-    [view python path](http://stackoverflow.com/questions/1489599/how-do-i-find-out-my-python-path-using-python)
+   - [view python path](http://stackoverflow.com/questions/1489599/how-do-i-find-out-my-python-path-using-python)
   * Create Postgres Database:
     - python manage.py syncdb
+  * Setup your own Database & AWS Credentials in settings.py
 
 ## Dependencies ##
-  * Python 3.4,
-  * Django 1.8,
-  * Postgres
-  * [django-cors-headers](https://github.com/ottoyiu/django-cors-headers/)
+  * [Python](https://www.python.org/) 3.4,
+  * [Postgres](https://www.postgresql.org/)
+  * [django](https://www.djangoproject.com/),
   * [psycopg2](http://initd.org/psycopg/)
   * [bs4](https://www.crummy.com/software/BeautifulSoup/)
-  * [gevent](http://www.gevent.org/)
   * [tinys3](https://www.smore.com/labs/tinys3/)
+  * [gevent](http://www.gevent.org/)
+  * [django-cors-headers](https://github.com/ottoyiu/django-cors-headers/)  
   * [django_extensions](https://github.com/django-extensions/django-extensions)
 
 ## Changelog ##
