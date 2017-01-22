@@ -23,9 +23,10 @@ An api server that:
   * Add your own neotext folder to the python path
 	 - export PYTHONPATH="$PYTHONPATH:/home/timlangeman/webapps/neotext/neotext"
    - [view python path](http://stackoverflow.com/questions/1489599/how-do-i-find-out-my-python-path-using-python)
+  * Setup your own Database & AWS Credentials in settings.py
   * Create Postgres Database:
     - python manage.py syncdb
-  * Setup your own Database & AWS Credentials in settings.py
+
 
 ## Dependencies ##
   * [Python](https://www.python.org/) 3.4,
