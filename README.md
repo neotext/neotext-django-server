@@ -10,14 +10,26 @@ An API server that computes the context surrounding quotations on a submitted UR
   * saves the contextual data to a Postgres database
   * uploads the quote-context json file to Amazon S3.
 
-## Setup ##
+## Setup/Installation ##
   * Python 3.4 or higher is required
-  * Clone the Git Repository:
-    - git clone https://github.com/neotext/neotext-django-server.git
+
+### Windows Installation Instructions: ###
+  * Clone the Git Repository (with GitHub Client):
+    - Download the GitHub Desktop Client if you don't have it already.
+    - Make sure you're logged in when using the client
   * Setup Virtual Environment:
       1. pip install virtualenv
-      2. virtualenv venv
-      3. source venv/bin/activate
+        - If you get a Permission Denied Error when installing Virtual Environment
+          PermissionError: [Errno 13] Permission denied: 'c:\\program files\\python36\\Lib\\site-packages\\virtualenv.py'
+
+        - You have to be able to write to the folder that you're installing it to
+            http://stackoverflow.com/questions/31172719/pip-install-access-denied-on-windows
+
+      2. virtualenv neotextEnv
+      3. [Activate the Virtual Environment](http://stackoverflow.com/questions/8921188/issue-with-virtualenv-cannot-activate
+) on Windows:
+        - neotextEnv\Scripts\activate.bat
+
   * In main folder containing requirements.txt:
       - pip install -r requirements.txt
   * Add your own neotext folder to the python path
@@ -26,6 +38,23 @@ An API server that computes the context surrounding quotations on a submitted UR
   * Setup your own Database & AWS Credentials in settings.py
   * Create Postgres Database:
     - python manage.py syncdb
+
+### Mac/Linux Installation Instructions ###
+* Clone the Git Repository:
+  - git clone https://github.com/neotext/neotext-django-server.git
+* Setup Virtual Environment:
+    1. pip install virtualenv
+    2. virtualenv venv
+    3. source venv/bin/activate
+* In main folder containing requirements.txt:
+    - pip install -r requirements.txt
+* Add your own neotext folder to the python path
+ - export PYTHONPATH="$PYTHONPATH:/home/timlangeman/webapps/neotext/neotext"
+ - [view python path](http://stackoverflow.com/questions/1489599/how-do-i-find-out-my-python-path-using-python)
+* Setup your own Database & AWS Credentials in settings.py
+* Create Postgres Database:
+  - python manage.py syncdb
+
 
 
 ## Dependencies ##
