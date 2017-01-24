@@ -10,12 +10,12 @@ An API server that computes the context surrounding quotations on a submitted UR
   * saves the contextual data to a Postgres database
   * uploads the quote-context json file to Amazon S3.
 
-## Setup/Installation ##
+## Setup/Installation Instructions: ##
   * Python 3.4 or higher is required
 
-### Windows Installation Instructions: ###
-  * Clone the Git Repository (with GitHub Client):
-    - Download the GitHub Desktop Client if you don't have it already.
+### Windows Installation ###
+  * Clone the Git Repository (with GitHub Desktop Client):
+    - Download the [GitHub Desktop Client](https://desktop.github.com/) if you don't have it already.
     - Make sure you're logged in when using the client
   * Setup Virtual Environment:
       1. pip install virtualenv
@@ -39,7 +39,7 @@ An API server that computes the context surrounding quotations on a submitted UR
   * Create Postgres Database:
     - python manage.py syncdb
 
-### Mac/Linux Installation Instructions ###
+### Mac/Linux Installation ###
 * Clone the Git Repository:
   - git clone https://github.com/neotext/neotext-django-server.git
 * Setup Virtual Environment:
