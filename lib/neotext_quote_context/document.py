@@ -12,6 +12,8 @@ from bs4 import BeautifulSoup
 from functools import lru_cache
 from django.core.cache import cache
 import requests
+import base64
+import hashlib
 import html
 import re
 
@@ -36,9 +38,17 @@ class Document:
     def __init__(self, url	):
         self.url = url
 
+    def url(self):
+        return self.url
+
+    def hexkey(self):
+        url = self.url.encode('utf-8')
+        key = base64.urlsafe_b64encode(hashlib.md5(url).digest())[:16]
+        return key.decode('utf-8')
+
     # @lru_cache(maxsize=8)
     def raw(self):
-        cache_key = "text_" + self.url
+        cache_key = "text_" + self.hexkey()
         text = cache.get(cache_key)
         if text:
             return text
