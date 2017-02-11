@@ -93,8 +93,8 @@ ROOT_URLCONF = 'neotext.urls'
 
 WSGI_APPLICATION = 'neotext.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/1.7/ref/settings/#databases
+# Database: for syntax for Postgres settings, see URL below:
+# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
 DATABASES = {
     'default': {

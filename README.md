@@ -17,20 +17,27 @@ An API server that computes the context surrounding quotations on a submitted UR
   * Clone the Git Repository (with GitHub Desktop Client):
     - Download the [GitHub Desktop Client](https://desktop.github.com/) if you don't have it already.
     - Make sure you're logged in when using the client
+    - Click the Green "Open in Desktop" link
+    - Click "Clone in Desktop"
   * Setup Virtual Environment:
-      1. pip install virtualenv
+      1. Open a Command Prompt in the Directory where you Cloned the Project
+      pip install virtualenv
         - If you get a Permission Denied Error when installing Virtual Environment
           PermissionError: [Errno 13] Permission denied: 'c:\\program files\\python36\\Lib\\site-packages\\virtualenv.py'
 
         - You have to be able to write to the folder that you're installing it to
             http://stackoverflow.com/questions/31172719/pip-install-access-denied-on-windows
 
-      2. virtualenv neotextEnv
+      2. Create a New Virtual Environment
+        virtualenv neotextEnv  (where neotextEnv is the name of the environment)
       3. [Activate the Virtual Environment](http://stackoverflow.com/questions/8921188/issue-with-virtualenv-cannot-activate
 ) on Windows:
         - neotextEnv\Scripts\activate.bat
 
-  * In main folder containing requirements.txt:
+        - You should see your command prompt say:
+          * (neotextEnv) C:\Path\To\Repositories
+
+  * Go to the main folder containing requirements.txt:
       - pip install -r requirements.txt
   * Add your own neotext folder to the python path
 	 - export PYTHONPATH="$PYTHONPATH:/home/timlangeman/webapps/neotext/neotext"
@@ -52,7 +59,14 @@ An API server that computes the context surrounding quotations on a submitted UR
  - export PYTHONPATH="$PYTHONPATH:/home/timlangeman/webapps/neotext/neotext"
  - [view python path](http://stackoverflow.com/questions/1489599/how-do-i-find-out-my-python-path-using-python)
 * Setup your own Database & AWS Credentials in settings.py
-* Create Postgres Database:
+   - copy settings.default.py to settings.py
+* Create Postgres Database (optional: it will use SQLlite otherwise):
+  - if using SQLlite, there is no need to edit the settings file
+  - if using Postgres, create new database and user,
+  - note the Postgres database name and password
+  - edit the Postgres database password in settings.py
+
+* Create the Database Tables (all database types)
   - python manage.py syncdb
 
 

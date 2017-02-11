@@ -75,7 +75,6 @@ def post_url(request):
     """
     # import gevent.monkey
     # gevent.monkey.patch_socket()
-
     quotes = []
     posted_url = request.POST.get('url', '')
 
