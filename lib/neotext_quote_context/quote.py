@@ -12,6 +12,7 @@ from neotext.lib.neotext_quote_context.quote_context import QuoteContext
 from neotext.lib.neotext_quote_context.document import Document
 from neotext.settings import HASH_ALGORITHM
 
+from bs4 import BeautifulSoup
 from functools import lru_cache
 import hashlib
 import html
@@ -55,7 +56,7 @@ class Quote:
         starting_location_guess=None   # guess used by google diff_match_patch
     ):
         self.start_time = time.time()  # measure elapsed time
-        self.citing_quote = trim_encode(citing_quote)
+        self.citing_quote = trim_encode(html_to_text(citing_quote))
         self.citing_url = trim_encode(citing_url)
         self.cited_url = trim_encode(cited_url)
         self.citing_text = trim_encode(citing_text)
@@ -167,6 +168,11 @@ class Quote:
                 data_dict.pop(excluded_field)
 
         return data_dict
+
+
+def html_to_text(html):
+    soup = BeautifulSoup(html, "html.parser")
+    return soup.get_text()
 
 
 # Non-class functions ####
