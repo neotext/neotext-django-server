@@ -11,6 +11,11 @@
 from bs4 import BeautifulSoup
 from urllib.request import urlopen, HTTPError, URLError
 from functools import lru_cache
+from django.core.cache import cache
+import requests
+import base64
+import hashlib
+import html
 import re
 
 import logging
@@ -18,20 +23,50 @@ logger = logging.getLogger(__name__)
 
 __author__ = 'Tim Langeman'
 __email__ = "timlangeman@gmail.com"
-__copyright__ = "Copyright (C) 2015-2016 Tim Langeman"
+__copyright__ = "Copyright (C) 2015-2017 Tim Langeman"
 __license__ = "MIT"
 __version__ = "0.2"
 
 
 class Document:
     """ Looks up url and computes plain-text version of document
+        Uses caching to prevent repeated lookups
 
         Usage:
-        doc = Document('http://www.openpolitics.com/2016/05/13/ted-nelson-philosophy-of-hypertext/')
+        doc = Document('http://www.openpolitics.com/philosophy.html')
     """
 
     def __init__(self, url	):
         self.url = url
+
+    def url(self):
+        return self.url
+
+    def hexkey(self):
+        url = self.url.encode('utf-8')
+        key = base64.urlsafe_b64encode(hashlib.md5(url).digest())[:16]
+        return key.decode('utf-8')
+
+    # @lru_cache(maxsize=8)
+    def raw(self):
+        cache_key = "text_" + self.hexkey()
+        text = cache.get(cache_key)
+        if text:
+            return text
+        else:
+            try:
+                headers = {'user-agent': 'Mozilla/5.0 (Windows NT 6.0;'
+                           ' WOW64; rv:24.0) Gecko/20100101 Firefox/24.0'}
+                r = requests.get(self.url, headers=headers)
+                text = r.text
+                cache.set(cache_key, text, 30)
+                print('Downloaded ' + self.url)
+                return r.text
+
+            except requests.HTTPError:
+                text = "document: HTTPError"
+                cache.set(cache_key, text, 10)
+                return text
 
     def doc_type(self):
         """ Todo: Distinguish between html, text, .doc, and pdf"""
@@ -53,7 +88,7 @@ class Document:
             return ""
 
     def html(self):
-        html = None
+        html = ""
         if self.doc_type() == 'html':
             html = self.raw()
         return html
@@ -61,28 +96,44 @@ class Document:
     @lru_cache(maxsize=8)
     def text(self):
         """convert html to plaintext"""
-        text = ''
 
         if self.doc_type() == 'html':
             soup = BeautifulSoup(self.html(), "html.parser")
-            # texts = soup.findAll(text=True)
-            # visible_texts = filter(visible, texts)
-            # text = ''.join(visible_texts)
+            invisible_tags = ['style', 'script', '[document]', 'head', 'title']
+            for elem in soup.findAll(invisible_tags):
+                elem.extract()  # hide javascript, css, etc
+
             text = soup.get_text()
             text = normalize_whitespace(text)
+            return html.unescape(text)     # escape html entities
 
         elif self.doc_type == 'pdf':
             # use: https://github.com/euske/pdfminer/
-            text = "not implemented"
+            return "not implemented"
 
         elif self.doc_type == 'doc':
             # https://github.com/deanmalmgren/textract
-            text = "not implemented"
+            return "not implemented"
 
         elif self.doc_type == 'text':
-            text = self.raw()
+            return self.raw()
 
-        return text
+        return 'error: no doc_type'
+
+    def canonical_url(self):
+        # Credit: http://pydoc.net/Python/pageinfo/0.40/pageinfo.pageinfo/
+
+        canonical_url = ""
+        if self.doc_type() == 'html':
+            soup = BeautifulSoup(self.raw(), 'html.parser')
+            canonical = soup.find("link", rel="canonical")
+            if canonical:
+                canonical_url = canonical['href']
+            else:
+                # og_url = soup.find("meta", property="og:url")
+                # canonical_url = og_url['content']
+                canonical_url = ''
+        return canonical_url
 
     def citation_urls(self):
         cite_urls = []
@@ -93,8 +144,10 @@ class Document:
         return cite_urls
 
     def citations(self):
+        pass
+        """
         for cited_url in self.citation_urls():
-            """
+
             q = Quote(
                 "citing_quote",  # todo: lookup
                 self.url,
@@ -102,8 +155,7 @@ class Document:
             )
             q.save_to_db()
             q.save_json_to_cloud()
-            """
-            pass
+        """
 
     def data(self):
         data = {}
@@ -111,6 +163,7 @@ class Document:
         data['html'] = self.html()
         data['raw'] = self.raw()
         data['text'] = self.text()
+        data['canonical_url'] = self.canonical_url()
         return data
 
 # Non-class functions #######################
@@ -123,7 +176,6 @@ def trim_encode(str):
 
 def normalize_whitespace(str):
     str = str.replace("&nbsp;", " ")
-    str = str.replace("\n", "")
     str = str.replace(u'\xa0', u' ')
     str = str.strip()
     str = re.sub(r'\s+', ' ', str)

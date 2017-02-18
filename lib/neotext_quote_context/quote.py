@@ -12,8 +12,10 @@ from neotext.lib.neotext_quote_context.quote_context import QuoteContext
 from neotext.lib.neotext_quote_context.document import Document
 from neotext.settings import HASH_ALGORITHM
 
+from bs4 import BeautifulSoup
 from functools import lru_cache
 import hashlib
+import html
 import time
 
 __author__ = 'Tim Langeman'
@@ -43,18 +45,22 @@ class Quote:
     def __init__(
         self,
         citing_quote,  # excerpt from citing document
-        citing_url,	  # url of the document that is doing the quoting
+        citing_url,    # url of the document that is doing the quoting
         cited_url,  # url of document that is being quoted
-        text_output=False,  # output computed text version of url's html
+        citing_text='',   # optional: text from citing document
+        citing_raw='',    # optional: raw content of citing document
+        text_output=True,  # output computed text version of url's html
         raw_output=True,  # output full html/pdf source of cited url
         prior_quote_context_length=500,  # length of excerpt before quote
         after_quote_context_length=500,  # length of excerpt after quote
         starting_location_guess=None   # guess used by google diff_match_patch
     ):
         self.start_time = time.time()  # measure elapsed time
-        self.citing_quote = trim_encode(citing_quote)
+        self.citing_quote = trim_encode(html_to_text(citing_quote))
         self.citing_url = trim_encode(citing_url)
         self.cited_url = trim_encode(cited_url)
+        self.citing_text = trim_encode(citing_text)
+        self.citing_raw = trim_encode(citing_raw)
         self.text_output = text_output
         self.raw_output = raw_output
         self.prior_quote_context_length = prior_quote_context_length
@@ -65,9 +71,9 @@ class Quote:
         """ The hash is based on a concatination of:
             citing_quote|citing_url|cited_url
         """
-        return ''.join([self.citing_quote, '|',
-                        self.citing_url, '|',
-                        self.cited_url
+        return ''.join([self.citing_quote.strip(), '|',
+                        self.citing_url.strip(), '|',
+                        self.cited_url.strip()
                         ])
 
     def hash(self):
@@ -100,14 +106,33 @@ class Quote:
             'sha1': self.hash(),
             'citing_url': self.citing_url,
             'cited_url': self.cited_url,
+
         }
 
-        # Get text version of document
-        citing_doc = Document(self.citing_url)
+        # Get text version of document if text not passed into object
+        citing_text = self.citing_text
+        citing_raw = self.citing_raw
+        if (len(citing_text) == 0) or (len(citing_raw) == 0):
+            citing_doc = Document(self.citing_url)
+            citing_text = citing_doc.data()['text']
+            citing_raw = citing_doc.data()['raw']
         cited_doc = Document(self.cited_url)
+        cited_text = cited_doc.data()['text']
+
+        # if self.raw_output and citing_doc:
+        #    data_dict['citing_raw'] = citing_doc.raw()
+        #    data_dict['cited_raw'] = Document(self.cited_url)().raw()
+
+        data_dict['citing_text'] = citing_text
+        data_dict['cited_text'] = cited_text
+        # data_dict['citing_doc_type'] = citing_doc.data()['doc_type']
+        # data_dict['cited_doc_type'] = cited_doc.data()['doc_type']
+
+        # Find context of quote from within text
+        citing_context = QuoteContext(self.citing_quote, citing_text)
+        cited_context = QuoteContext(self.citing_quote, cited_text)
 
         # Populate context fields with Document methods
-        document_fields = ['doc_type']
         quote_context_fields = [
             'context_before', 'context_after',  # 'quote',
             'quote_length',
@@ -115,24 +140,6 @@ class Quote:
             'quote_start_position', 'quote_end_position',
             'context_start_position', 'context_end_position',
         ]
-
-        if self.raw_output:
-            data_dict['citing_raw'] = citing_doc.raw()
-            data_dict['cited_raw'] = cited_doc.raw()
-
-        if self.text_output:
-            quote_context_fields.append('text')
-
-        for doc_field in document_fields:
-            citing_field = ''.join(['citing_', doc_field])
-            cited_field = ''.join(['cited_', doc_field])
-            data_dict[citing_field] = citing_doc.data()[doc_field]
-            data_dict[cited_field] = cited_doc.data()[doc_field]
-
-        # Find context of quote from within text
-        citing_context = QuoteContext(self.citing_quote, citing_doc.text())
-        cited_context = QuoteContext(self.citing_quote, cited_doc.text())
-
         for field in quote_context_fields:
             citing_field = ''.join(['citing_', field])
             cited_field = ''.join(['cited_', field])
@@ -163,7 +170,15 @@ class Quote:
         return data_dict
 
 
+def html_to_text(html):
+    soup = BeautifulSoup(html, "html.parser")
+    return soup.get_text()
+
+
 # Non-class functions ####
 def trim_encode(content):
     content = content.strip()
-    return content
+    content = content.replace("&nbsp;", " ")
+    content = content.replace("\n", " ")
+    content = content.replace(u'\xa0', " ")
+    return html.unescape(content)

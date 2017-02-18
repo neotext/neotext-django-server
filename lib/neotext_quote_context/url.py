@@ -8,6 +8,7 @@
 # The code for this server library is released under the MIT License:
 # http://www.opensource.org/licenses/mit-license
 
+
 from neotext.models import Quote as QuoteModel
 from neotext.lib.neotext_quote_context.quote import Quote as QuoteLookup
 from neotext.lib.neotext_quote_context.document import Document
@@ -15,11 +16,12 @@ from django.utils.encoding import DjangoUnicodeDecodeError
 from bs4 import BeautifulSoup
 from neotext.settings import NUM_DOWNLOAD_PROCESSES
 from multiprocessing import Pool
+from functools import lru_cache
 import time
 
 __author__ = 'Tim Langeman'
 __email__ = "timlangeman@gmail.com"
-__copyright__ = "Copyright (C) 2015-2016 Tim Langeman"
+__copyright__ = "Copyright (C) 2015-2017 Tim Langeman"
 __license__ = "MIT"
 __version__ = "0.2"
 
@@ -34,11 +36,12 @@ class URL:
     def __str__(self):
         return self.url
 
+    # Document methods imported here so class can make only 1 request per URL
+    def doc(self):
+        return Document(self.url)
+
     def raw(self):
-        raw = ''
-        doc = Document(self.url)
-        raw = doc.raw()
-        return raw
+        return self.doc().raw()
 
     def doc_type(self):
         return 'html'  # hard-coded.  Todo: pdf, text
@@ -49,17 +52,15 @@ class URL:
             html = self.raw()
         return html
 
+    @lru_cache(maxsize=25)
     def text(self):
-        text = ''
-        if self.doc_type() == 'html':
-            html = self.html()
-            text = html.get_text()
-        return text
+        return self.doc().text()
 
     def citation_urls(self):
         """ Returns a dictionary of url and quote text from all
             blockquote and q tags on this page
         """
+        print("Getting URLs")
         cite_urls = {}
         soup = BeautifulSoup(self.html(), 'html.parser')
         for cite in soup.find_all(['blockquote', 'q']):
@@ -74,38 +75,34 @@ class URL:
             quote = {}
             quote['citing_quote'] = citing_quote
             quote['citing_url'] = self.url
+            quote['citing_text'] = self.text()
+            quote['citing_raw'] = self.raw()
             quote['cited_url'] = cited_url
-            citations_list.append(quote)
+        citations_list.append(quote)
         return citations_list
 
     def publish_citations(self):
         """ Save quote data to database and publish json """
         print("Publishing citations ..")
+        if not self.citations():
+            return
         for quote_dict in self.citations():
-            print("Found data: " + quote_dict['cited_url'])
-            sha1 = quote_dict['sha1']
-            
-            try:
-              quote_dict_defaults = quote_dict
-              quote_dict_defaults.pop('sha1')  # remove sha1 key
-              q, created = QuoteModel.objects.update_or_create(
-                  sha1=sha1,
-                  defaults=quote_dict_defaults
-              )
-            except DjangoUnicodeDecodeError:
-              print("Unicode error: todo fix")
-              return False
-
-            try:
-                if q:
-                    q.publish_json()
-                else:
-                    print("Unable to publish: " + quote_dict['cited_url'])
-
-            except ValueError:
-                print("Error publishing: " + quote_dict['cited_url'])
-
-            print("Published: " + quote_dict['cited_url'])
+            if quote_dict:
+                sha1 = quote_dict['sha1']
+                quote_dict_defaults = quote_dict
+                quote_dict_defaults.pop('sha1')  # remove sha1 key
+                q, created = QuoteModel.objects.update_or_create(
+                    sha1=sha1,
+                    defaults=quote_dict_defaults
+                )
+                try:
+                    if q:
+                        q.publish_json()
+                    else:
+                        print("Unable to publish: " + quote_dict['cited_url'])
+                except ValueError:
+                    print("Error publishing: " + quote_dict['cited_url'])
+                print("Published: " + quote_dict['cited_url'])
 
     def citations(self):
         """ Returns a list of Quote Lookup results for all citations on this page
@@ -115,39 +112,41 @@ class URL:
             using python 'map' function
         """
         result_list = []
-        for quote_keys in self.citations_list():
-            print('Looking up: ' + quote_keys['cited_url'])
-            quote = QuoteLookup(
-                        quote_keys['citing_quote'],
-                        quote_keys['citing_url'],
-                        quote_keys['cited_url']
-                    )
-            result_list.append(quote.data())
-
-        return result_list  # citations_data_list
-
-        """
+        citations_list = self.citations_list()
         print("Looking up citations: ")
         pool = Pool(processes=NUM_DOWNLOAD_PROCESSES)
         try:
-            result_list = pool.map(
-                load_quote_data, self.citations_list()
-            )
+                for quote_keys in citations_list:
+                    result_list = pool.map(
+                        load_quote_data, citations_list
+                    )
         except ValueError:
             print("Skipping map value ..")
-            pass
 
-        pool.close()
-        print("finished citations.")
+        return result_list
+
+        """
+        # gevent version:
+
+        result_list_values = [gevent.spawn(load_quote_data, **quote_keys)
+                              for quote_keys in self.citations_list()
+                              ]
+        gevent.joinall(result_list_values)
+        # Gevent results are accessed with .value   Package as list.
+        for result in result_list_values:
+            result_list.append(result.value)
+        return result_list
         """
 
 
 def load_quote_data(quote_keys):
     """ lookup quote data, from keys """
-    print("Downloading: " + quote_keys['citing_url'])
+    print("Downloading citation from: " + quote_keys['cited_url'])
     quote = QuoteLookup(
-                quote_keys['citing_quote'],
-                quote_keys['citing_url'],
-                quote_keys['cited_url']
-            )
+                 quote_keys['citing_quote'],
+                 quote_keys['citing_url'],
+                 quote_keys['cited_url'],
+                 quote_keys['citing_text'],  # optional: caching
+                 quote_keys['citing_raw'],   # optional: caching
+             )
     return quote.data()

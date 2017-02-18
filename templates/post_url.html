@@ -10,6 +10,9 @@
   <input id="generate_neotext" type="text" name="url" />
   <input type="submit" value="create" />
 </form>
+<a id="download-template" download target="_blank"
+  href="http://download.neotext.net/quote-context/neotext-sample.html"
+  > Download a Sample HTML Template</a>
 
 {% if quotes %}
   <h2>Citations Found</h2>
@@ -31,6 +34,12 @@
   <ol id="neotext_steps">
     <li><p><a href="http://www.neotext.net/wordpress-plugin/">Install the Wordpress Plugin</a> or Add these snippets of javascript to the footer of your page:</p>
       <script src="https://gist.github.com/timlangeman/0e5235136803774d28d1b0d922e48033.js"></script>
+
+      (<a download target="_blank" href="http://download.neotext.net/quote-context/neotext-sample.html"
+        > Download a Sample HTML Template</a> |
+        <a href="http://download.neotext.net/quote-context/neotext-sample.html"
+        >View Sample</a>
+      )
     </li>
 
     <li>Create a webpage with a citation, using the "cite" attribute with either
@@ -87,6 +96,8 @@
   </li>
   <li><a href="http://demo.neotext.net/">Test-drive the wordpress plugin</a> on the demo site</li>
   </ol>
+
+
 
 </div>
 

@@ -12,8 +12,8 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
+SITE_READ_URL = 'http://read.neotext.net'
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '12345#!67890abcdefghizxy'
@@ -27,6 +27,14 @@ TEMPLATE_DEBUG = True
 JSON_FILE_PATH = "/Library/WebServer/Documents/quote/sha1/"
 VERSION_NUM = '0.02'
 NUM_DOWNLOAD_PROCESSES = 25  # num citations downloaded simultaneously
+DOWNLOAD_TIMEOUT = 5         # num seconds to wait on download
+
+""" algorithm used to generate hash key: ('sha1','md5','sha256')
+    note: changing algorithm requires adding support to backend
+    if using a relational db, may require new/different column definition
+"""
+HASH_ALGORITHM = 'sha1'
+
 
 # AMAZON S3 Login information
 AMAZON_ACCESS_KEY = '123243545789459063022'
@@ -85,14 +93,25 @@ ROOT_URLCONF = 'neotext.urls'
 
 WSGI_APPLICATION = 'neotext.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/1.7/ref/settings/#databases
+# Database: for syntax for Postgres settings, see URL below:
+# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 30,
+        'OPTIONS': {
+            'MAX_ENTRIES': 10000,
+            'CULL_FREQUENCY': 2,
+        }
     }
 }
 
@@ -128,6 +147,21 @@ STATICFILES_DIRS = (
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 
-TEMPLATE_DIRS = (
-    BASE_DIR + '/templates/',
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            BASE_DIR + '/templates/',
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'debug': DEBUG,
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]

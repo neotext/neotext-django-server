@@ -233,9 +233,9 @@ class Quote(models.Model):
         return [
             'sha1',
             'cited_url', 'citing_url',
+            'citing_quote', 'cited_quote',
             'cited_context_before', 'cited_context_after',
             'citing_context_before', 'citing_context_after',
-            'citing_quote', 'cited_quote'
         ]
 
     def json(self, all_fields=False):
@@ -255,6 +255,8 @@ class Quote(models.Model):
         """
             Upload json file to Amazon S3
         """
+        import gevent.monkey
+        gevent.monkey.patch_socket()
         print('Starting upload json to cloud: ' + self.local_filename())
 
         f = open(self.local_filename(), 'rb')
