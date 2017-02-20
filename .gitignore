@@ -22,6 +22,7 @@ coverage.xml
 
 # Directories
 /static	
+/neotextEnv
 
 # machine-specific setting
 settings.py 

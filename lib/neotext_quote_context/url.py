@@ -12,6 +12,7 @@
 from neotext.models import Quote as QuoteModel
 from neotext.lib.neotext_quote_context.quote import Quote as QuoteLookup
 from neotext.lib.neotext_quote_context.document import Document
+from django.utils.encoding import DjangoUnicodeDecodeError
 from bs4 import BeautifulSoup
 from neotext.settings import NUM_DOWNLOAD_PROCESSES
 from multiprocessing import Pool
