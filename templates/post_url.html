@@ -2,11 +2,10 @@
 {% block title %}Generate Neotext for your website: contextual citation{% endblock %}
 {% block content %}<a name="generate"></a>
 
-<a name="url" /></a>
 <h1>Generate a new Neotext</h1>
-<p>Enter the URL of a YOUR page (the one with the "cite" attributes):</p>
-<form id="post_url" method="post" action="">
-  Your URL:
+<p>Enter the URL of a page that has "cite" attributes:</p>
+<form method="post" action="">
+  URL:
   <input id="generate_neotext" type="text" name="url" />
   <input type="submit" value="create" />
 </form>
@@ -16,14 +15,11 @@
 
 {% if quotes %}
   <h2>Citations Found</h2>
-  <p><strong>on page</strong>: <a target="_blank" href="{{ posted_url }}">{{ posted_url }}</a></p>
-  <div id="quotes">
   {% for quote in quotes %}
     <p><a href="{{ quote.cited_url }}">{{ quote.cited_url }}</a></p>
     <blockquote>{{ quote.citing_quote }}</blockquote>
     <p>{{ quote.json_url }}</p>
   {% endfor %}
-  </quotes>
 
 {% endif %}
 
@@ -32,7 +28,7 @@
   <h2>Learn How it Works</h2>
 
   <ol id="neotext_steps">
-    <li><p><a href="http://www.neotext.net/wordpress-plugin/">Install the Wordpress Plugin</a> or Add these snippets of javascript to the footer of your page:</p>
+    <li><p>Add these snippets of javascript to the header and footer of your page:</p>
       <script src="https://gist.github.com/timlangeman/0e5235136803774d28d1b0d922e48033.js"></script>
 
       (<a download target="_blank" href="http://download.neotext.net/quote-context/neotext-sample.html"
@@ -67,7 +63,7 @@
       <p>Neotext adds contextual popups to "q" tags that use the "cite" attribute.
         Hover over the underlined red for the popup:</p>
 
-      <p>Matthew 5 says: <q cite="https://www.biblegateway.com/passage/?search=Matthew+5">Love your enemies</q>,
+      <p>Matthew 5 says: <q cite=”https://www.biblegateway.com/passage/?search=Matthew+5″>Love your enemies</q>,
       but like the Lawyer asking <q cite="https://www.biblegateway.com/passage/?search=Luke+10%3A25-37&version=NRSV">who is my neighbor?</q>,
       many try to redefine the words "love" and "neighbor" in narrow ways.
       </p>
@@ -76,29 +72,35 @@
 
     <li>Enter the url for your page in the "Generate a new Neotext" section
       <a href="#generate">at the top of the page</a>.
-
-	  
-
     </li>
 
     <li>Reload your page.  Your citations should now be neotextified!</li>
   </ol>
 
-  <h2>More Help</h2>
+  <a name="sample-code"></a>
+  <h3>Code Example:</h3>
+  <p>The code for displaying the looked-up information is part of a free open source jQuery plugin called <a href="https://github.com/timlangeman/quote-context/blob/master/js/quote-context.js">neotext-quote-context.js</a>, available as a <a href="http://www.neotext.net/wordpress-plugin/">wordpress</a> or <a href="http://www.neotext.net/code/">jQuery</a> plugin.</p>
+  <p><iframe src="https://player.vimeo.com/video/189252945" width="736" height="460" frameborder="0" allowfullscreen="allowfullscreen"></iframe></p>
+  <h4>Get simplified html source of this page</h4>
   <ol>
-  <li><a href="http://www.neotext.net/2016/10/02/using-the-neotext-generator/">View screenshots</a> of these steps</li>
-  <li>If you want a sample document to get you started:
-	<ul>
-		<li><a download href="http://www.neotext.net/demo.html">download the demo</a> file.</li>
-		<li>Upload the file to your website</li>
-		<li>Enter the page's URL into the <a href="http://write.neotext.net/#url">Generator</a> and click "<strong>Create</strong>"</li>
-	</ul>
-  </li>
-  <li><a href="http://demo.neotext.net/">Test-drive the wordpress plugin</a> on the demo site</li>
+    <li><a href="http://www.neotext.net/neotext-sample.html" target="_blank" download="">Download neotext-sample.html</a>  (<a href="http://www.neotext.net/neotext-sample.html">view online</a>)</li>
+    <li>Save the html file to your server, giving it a unique name like:
+      <ul>
+        <li>http://your-domain.com/neotext-sample.html</li>
+      </ul>
+    </li>
+    <li>Generate the Neotext json file by <a href="http://write.neotext.net/">entering your page&#8217;s URL in the generator</a>.
+      <ul>
+        <li>a json file with be uploaded to Amazon S3 for each quote on the page.</li>
+      </ul>
+    </li>
+    <li>Reload your page. You should notice the arrows appear on the blockquote; and you should get a contextual popup if you click on &#8220;Love your enemies&#8221;.</li>
   </ol>
 
 
 
 </div>
+
+{{ posted_url }}
 
 {% endblock %}

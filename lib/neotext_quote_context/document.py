@@ -9,7 +9,6 @@
 # http://www.opensource.org/licenses/mit-license
 
 from bs4 import BeautifulSoup
-from urllib.request import urlopen, HTTPError, URLError
 from functools import lru_cache
 from django.core.cache import cache
 import requests
@@ -75,17 +74,6 @@ class Document:
         # import magic	# https://github.com/ahupp/python-magic
         # return doc_type
         return 'html'  # hardcode to html for now
-
-    @lru_cache(maxsize=8)
-    def raw(self):
-        logger.debug('Downloading ' + self.url)
-        try:
-            # url = parse.quote(self.url)
-            # url = url.strip('\'"')
-            raw = urlopen(self.url).read()
-            return raw  # .decode('utf-8')
-        except (HTTPError, URLError):
-            return ""
 
     def html(self):
         html = ""
@@ -180,15 +168,3 @@ def normalize_whitespace(str):
     str = str.strip()
     str = re.sub(r'\s+', ' ', str)
     return str
-
-
-def visible(element):
-
-    """Exclude non-visible html content from text-only version
-      * Credit: http://stackoverflow.com/questions/1936466/beautifulsoup-grab-visible-webpage-text
-      * Profile: http://stackoverflow.com/users/230636/jbochi
-    """
-
-    return(element.parent.name in [
-        'style', 'script', '[document]', 'head', 'title'
-    ])
