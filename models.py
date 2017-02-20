@@ -255,8 +255,8 @@ class Quote(models.Model):
         """
             Upload json file to Amazon S3
         """
-        import gevent.monkey
-        gevent.monkey.patch_socket()
+        #import gevent.monkey
+        #gevent.monkey.patch_socket()
         print('Starting upload json to cloud: ' + self.local_filename())
 
         f = open(self.local_filename(), 'rb')
