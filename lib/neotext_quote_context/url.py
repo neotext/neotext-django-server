@@ -103,6 +103,7 @@ class URL:
                     print("Error publishing: " + quote_dict['cited_url'])
                 print("Published: " + quote_dict['cited_url'])
 
+    @lru_cache(maxsize=20)
     def citations(self):
         """ Returns a list of Quote Lookup results for all citations on this page
             Uses asycnronous pool to achieve parallel processing
@@ -138,9 +139,11 @@ class URL:
         """
 
 
+# @lru_cache(maxsize=25)
 def load_quote_data(quote_keys):
     """ lookup quote data, from keys """
     print("Downloading citation from: " + quote_keys['cited_url'])
+    print("  Downloading: " + quote_keys['citing_quote'])
     quote = QuoteLookup(
                  quote_keys['citing_quote'],
                  quote_keys['citing_url'],

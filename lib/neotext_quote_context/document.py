@@ -14,7 +14,6 @@ from django.core.cache import cache
 import requests
 import base64
 import hashlib
-import html
 import re
 
 import logging
@@ -84,16 +83,18 @@ class Document:
     @lru_cache(maxsize=8)
     def text(self):
         """convert html to plaintext"""
-
         if self.doc_type() == 'html':
             soup = BeautifulSoup(self.html(), "html.parser")
             invisible_tags = ['style', 'script', '[document]', 'head', 'title']
             for elem in soup.findAll(invisible_tags):
-                elem.extract()  # hide javascript, css, etc
+                elem.extract()  # remove elements: javascript, css, etc
+            text = soup.get_text(separator=' ')
 
-            text = soup.get_text()
-            text = normalize_whitespace(text)
-            return html.unescape(text)     # escape html entities
+            # Remove double spaces but retain line breaks
+            text = '\n'.join(
+                ' '.join(line.split()) for line in text.split('\n')
+            )
+            return text
 
         elif self.doc_type == 'pdf':
             # use: https://github.com/euske/pdfminer/

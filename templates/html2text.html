@@ -1,0 +1,12 @@
+{% if not text %}
+{% block title %}Convert HTML to Text{% endblock %}
+  {% block content %}
+    <h1>Convert HTML to Text</h1>
+    <p>Enter the URL of a page that has "cite" attributes:</p>
+    <form method="post" action="">
+      URL:
+      <input id="generate_neotext" type="text" name="url" />
+      <input type="submit" value="create" />
+    </form>
+  {% endblock %}
+{% endif %}{{ text }}

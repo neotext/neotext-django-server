@@ -39,12 +39,22 @@ An API server that computes the context surrounding quotations on a submitted UR
 
   * Go to the main folder containing requirements.txt:
       - pip install -r requirements.txt
-  * Add your own neotext folder to the python path
-	 - export PYTHONPATH="$PYTHONPATH:/home/timlangeman/webapps/neotext/neotext"
+  * [Add your own neotext folder to the python path](http://stackoverflow.com/questions/3701646/how-to-add-to-the-pythonpath-in-windows-7)
+	 - create a Python Path variable if you don't have one already
    - [view python path](http://stackoverflow.com/questions/1489599/how-do-i-find-out-my-python-path-using-python)
-  * Setup your own Database & AWS Credentials in settings.py
-  * Create Postgres Database:
-    - python manage.py syncdb
+   * Setup your own Database & AWS Credentials in settings.py
+      - copy settings.default.py to settings.py
+   * Create Postgres Database (optional: it will use SQLlite otherwise):
+     - if using SQLlite, there is no need to edit the settings file
+     - if using Postgres, [Download Postgres](https://www.postgresql.org/download/windows/) if you don't have it
+      * run the Postgres installer
+      * create new database and user,
+      * note the Postgres database name and password
+     - edit the Postgres database password in settings.py
+
+   * Create the Database Tables (all database types)
+     - python manage.py syncdb
+
 
 ### Mac/Linux Installation ###
 * Clone the Git Repository:

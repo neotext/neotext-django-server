@@ -36,9 +36,9 @@ class QuoteContext:
         after_quote_context_length=500,  # length of excerpt after quote
         starting_location_guess=None  # guess used by google diff_match_patch
     ):
-        self.quote = quote
-        self.text = text
-        self.text_output = text_output
+        self.quote = normalize_text(quote)
+        self.text = normalize_text(text)
+        self.text_output = normalize_text(text_output)
         self.prior_quote_context_length = prior_quote_context_length
         self.after_quote_context_length = after_quote_context_length
         self.starting_location_guess = starting_location_guess
@@ -142,3 +142,28 @@ class QuoteContext:
 
     def dict(self):
         return self.data()
+
+
+def normalize_text(text):
+    """ Standardize text so that curly apostrophes and
+        normal apostrophes have the same representation and
+        html entities match their representations
+    """
+    pass
+    symbol_replace = {
+        "&amp;": "&",
+        "&quot;": '"',
+        "&apos;": "'",
+        "&#8217;": "'",
+        "&rsquo;": "'",
+        "&lsquo;": "'",
+        "&gt;": ">",
+        "&lt;": "<",
+    }
+    for (html_symbol, text_value) in symbol_replace.items():
+        try:
+            text = text.replace(html_symbol, text_value)
+            # print(html_symbol, " : " , text_value)
+        except AttributeError:
+            pass
+    return text

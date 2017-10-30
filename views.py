@@ -25,6 +25,7 @@ from .models import Quote
 # from .models import URL
 from neotext.lib.neotext_quote_context.url import URL
 from neotext.lib.neotext_quote_context.quote import Quote as QuoteLookup
+from neotext.lib.neotext_quote_context.document import Document
 from neotext.settings import AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY, AMAZON_S3_BUCKET, AMAZON_S3_ENDPOINT
 from neotext.settings import JSON_FILE_PATH, VERSION_NUM
 import tinys3
@@ -68,6 +69,19 @@ def quote(request, sha1):
     html = template.render(context)
     return HttpResponse(html)
 
+def html2text(request):
+    text = ''
+    posted_url = request.POST.get('url', '')
+    if posted_url:
+        d = Document(posted_url)
+        text = d.text()
+    context = Context({
+        'text' : text
+    })
+    template = get_template('html2text.html')
+    html = template.render(context)
+    return HttpResponse(html)
+
 def post_url(request):
     """
         Call URL.publish_citations()
@@ -90,6 +104,8 @@ def post_url(request):
     url = None
     if url_is_valid:
         url = URL(posted_url)
+        #for cl in url.citations_list():
+        #    print(cl)
         url.publish_citations()
 
     # Query DB for published citations

@@ -10,8 +10,8 @@
 
 from neotext.lib.neotext_quote_context.quote_context import QuoteContext
 from neotext.lib.neotext_quote_context.document import Document
+from neotext.lib.neotext_quote_context.utility import Text
 from neotext.settings import HASH_ALGORITHM
-
 from bs4 import BeautifulSoup
 from functools import lru_cache
 import hashlib
@@ -56,11 +56,11 @@ class Quote:
         starting_location_guess=None   # guess used by google diff_match_patch
     ):
         self.start_time = time.time()  # measure elapsed time
-        self.citing_quote = trim_encode(html_to_text(citing_quote))
-        self.citing_url = trim_encode(citing_url)
-        self.cited_url = trim_encode(cited_url)
-        self.citing_text = trim_encode(citing_text)
-        self.citing_raw = trim_encode(citing_raw)
+        self.citing_quote = citing_quote
+        self.citing_url = citing_url
+        self.cited_url = cited_url
+        self.citing_text = citing_text
+        self.citing_raw = citing_raw
         self.text_output = text_output
         self.raw_output = raw_output
         self.prior_quote_context_length = prior_quote_context_length
@@ -71,10 +71,15 @@ class Quote:
         """ The hash is based on a concatination of:
             citing_quote|citing_url|cited_url
         """
-        return ''.join([self.citing_quote.strip(), '|',
-                        self.citing_url.strip(), '|',
-                        self.cited_url.strip()
-                        ])
+
+        soup = BeautifulSoup(self.citing_quote, "html.parser")
+        citing_text = soup.get_text()
+
+        replace_text = ['\n', '’', ',', '.' , '-', ':', '/', '!', ' ']
+        for txt in replace_text:
+            citing_text = citing_text.replace(txt, '')
+
+        return ''.join([citing_text, '|', self.citing_url, '|', self.cited_url])
 
     def hash(self):
         """
@@ -175,10 +180,20 @@ def html_to_text(html):
     return soup.get_text()
 
 
+def convert_special_characters(content):
+    replacement_chars = {
+        '\n': " ",
+        '&nbsp;': " ",
+        '#8217': "'",
+        u'\xa0': " "
+    }
+    for char in replacement_chars:
+        content = content.replace('', "'")
+    return content
+
 # Non-class functions ####
 def trim_encode(content):
     content = content.strip()
-    content = content.replace("&nbsp;", " ")
-    content = content.replace("\n", " ")
-    content = content.replace(u'\xa0', " ")
-    return html.unescape(content)
+    content = convert_special_characters(content)
+    content = html.unescape(content)
+    return content
