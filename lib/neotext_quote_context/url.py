@@ -56,7 +56,7 @@ class URL:
         return self.doc().text()
 
     def citation_urls(self):
-        """ Returns a dictionary of url and quote text from all
+        """ Returns a dictionary of url and quote text for all
             blockquote and q tags on this page
         """
         print("Getting URLs")
@@ -77,16 +77,21 @@ class URL:
             quote['citing_text'] = self.text()
             quote['citing_raw'] = self.raw()
             quote['cited_url'] = cited_url
-        citations_list.append(quote)
+            citations_list.append(quote)
         return citations_list
 
     def publish_citations(self):
         """ Save quote data to database and publish json """
         print("Publishing citations ..")
         if not self.citations():
+            print('not self.citations()')
             return
-        for quote_dict in self.citations():
-            if quote_dict:
+        for num, quote_dict in enumerate(self.citations()):
+            print("Quote: " + str(num))
+
+            if not quote_dict:
+                print("No quote_dict in self.citations()")
+            else:
                 sha1 = quote_dict['sha1']
                 quote_dict_defaults = quote_dict
                 quote_dict_defaults.pop('sha1')  # remove sha1 key
@@ -102,8 +107,8 @@ class URL:
                 except ValueError:
                     print("Error publishing: " + quote_dict['cited_url'])
                 print("Published: " + quote_dict['cited_url'])
+                print("\n  SHA1=" + sha1)
 
-    @lru_cache(maxsize=20)
     def citations(self):
         """ Returns a list of Quote Lookup results for all citations on this page
             Uses asycnronous pool to achieve parallel processing
@@ -114,12 +119,12 @@ class URL:
         result_list = []
         citations_list = self.citations_list()
         print("Looking up citations: ")
+
         pool = Pool(processes=NUM_DOWNLOAD_PROCESSES)
         try:
-                for quote_keys in citations_list:
-                    result_list = pool.map(
-                        load_quote_data, citations_list
-                    )
+            for quote_keys in citations_list:
+                result_list = pool.map(load_quote_data, citations_list)
+
         except ValueError:
             print("Skipping map value ..")
 
@@ -143,7 +148,7 @@ class URL:
 def load_quote_data(quote_keys):
     """ lookup quote data, from keys """
     print("Downloading citation from: " + quote_keys['cited_url'])
-    print("  Downloading: " + quote_keys['citing_quote'])
+    # print("  Downloading: " + quote_keys['citing_quote'])
     quote = QuoteLookup(
                  quote_keys['citing_quote'],
                  quote_keys['citing_url'],
