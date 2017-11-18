@@ -9,8 +9,6 @@
 # http://www.opensource.org/licenses/mit-license
 
 from bs4 import BeautifulSoup
-import html
-import html2text
 
 
 class Text:
@@ -25,35 +23,29 @@ class Text:
     def __str__(self):
         return self.normalize()
 
-    def normalize(self):
-        str = self.input
-        str = escape_url(str)
-        return escape_quote(str)
+    def text(self):
+        soup = BeautifulSoup(self.input, "html.parser")
+        invisible_tags = ['style', 'script', '[document]', 'head', 'title']
+        for elem in soup.findAll(invisible_tags):
+            elem.extract()  # remove elements: javascript, css, etc
+        text = soup.get_text(separator=' ')
 
+        # remove whitespace: https://stackoverflow.com/questions/1546226/simple-way-to-remove-multiple-spaces-in-a-string
+        text = " ".join(text.split())
 
-def escape_url(str):
-    str = str.strip()
-    str = str.replace('&nbsp', '')   # remove &nbsp;
-    return str.replace('\xa0', '')   # remove encoded nbsp;
+        """
+        # Remove double spaces but retain line breaks
+        text = '\n'.join(
+            ' '.join(line.split()) for line in text.split('\n')
+        )
+        """
+        return text
 
-
-def escape_quote(str):
-    str = escape_url(str)
-    return escape(str)
-
-
-def escape(content):
-    content = html.unescape(content)
-    return convert_special_characters(content)
-
-
-def convert_special_characters(content):
-    content = content.replace('&nbsp;', '')
-    content = content.replace('\xa0', '')
-    content = content.replace('\n', '')
-    return content
-
-
-def html_to_text(str):
-    soup = BeautifulSoup(str, "html.parser")
-    return soup.get_text()
+    def normalize(self, replace_chars=''):
+        replace_text = ['\n', '’', ',', '.' , '-', ':', '/', '!', '`', '~', '^',
+            ' ', '&nbsp', '\xa0'
+        ]
+        content = self.text()
+        for txt in replace_text:
+            content = content.replace(txt, replace_chars)
+        return content
