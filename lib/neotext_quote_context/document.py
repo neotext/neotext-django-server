@@ -11,7 +11,9 @@
 from bs4 import BeautifulSoup
 from functools import lru_cache
 from django.core.cache import cache
+from neotext.lib.neotext_quote_context.utility import Text
 import requests
+from requests.exceptions import SSLError
 import base64
 import hashlib
 import re
@@ -45,26 +47,34 @@ class Document:
         key = base64.urlsafe_b64encode(hashlib.md5(url).digest())[:16]
         return key.decode('utf-8')
 
-    # @lru_cache(maxsize=8)
+    #  @lru_cache(maxsize=100)
     def raw(self):
-        cache_key = "text_" + self.hexkey()
-        text = cache.get(cache_key)
-        if text:
-            return text
+        cache_key = "raw_" + self.hexkey()
+        raw = cache.get(cache_key)
+        if raw:
+            print('Cache hit:' + self.url)
+            return raw
         else:
             try:
                 headers = {'user-agent': 'Mozilla/5.0 (Windows NT 6.0;'
                            ' WOW64; rv:24.0) Gecko/20100101 Firefox/24.0'}
                 r = requests.get(self.url, headers=headers)
-                text = r.text
-                cache.set(cache_key, text, 30)
+                raw = r.text
+                cache.set(cache_key, raw, 60)
                 print('Downloaded ' + self.url)
-                return r.text
+                return raw
 
             except requests.HTTPError:
-                text = "document: HTTPError"
-                cache.set(cache_key, text, 10)
-                return text
+                raw = "document: HTTPError"
+                cache.set(cache_key, raw, 20)
+                print("HTTPError: " + cache_key)
+                return raw
+
+            except SSLError:
+                raw = "document: SSLError"
+                cache.set(cache_key, raw, 20)
+                print("SSLError: " + cache_key)
+                return raw
 
     def doc_type(self):
         """ Todo: Distinguish between html, text, .doc, and pdf"""
@@ -84,6 +94,10 @@ class Document:
     def text(self):
         """convert html to plaintext"""
         if self.doc_type() == 'html':
+            t = Text(self.raw())
+            return t.text()
+
+            """
             soup = BeautifulSoup(self.html(), "html.parser")
             invisible_tags = ['style', 'script', '[document]', 'head', 'title']
             for elem in soup.findAll(invisible_tags):
@@ -94,7 +108,7 @@ class Document:
             text = '\n'.join(
                 ' '.join(line.split()) for line in text.split('\n')
             )
-            return text
+            """
 
         elif self.doc_type == 'pdf':
             # use: https://github.com/euske/pdfminer/
