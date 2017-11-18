@@ -14,6 +14,7 @@ from neotext.lib.neotext_quote_context.utility import Text
 from neotext.settings import HASH_ALGORITHM
 from bs4 import BeautifulSoup
 from functools import lru_cache
+from django.core.cache import cache
 import hashlib
 import html
 import time
@@ -71,15 +72,10 @@ class Quote:
         """ The hash is based on a concatination of:
             citing_quote|citing_url|cited_url
         """
-
-        soup = BeautifulSoup(self.citing_quote, "html.parser")
-        citing_text = soup.get_text()
-
-        replace_text = ['\n', '’', ',', '.' , '-', ':', '/', '!', ' ']
-        for txt in replace_text:
-            citing_text = citing_text.replace(txt, '')
-
-        return ''.join([citing_text, '|', self.citing_url, '|', self.cited_url])
+        return ''.join([Text(self.citing_quote).normalize(''), '|',
+                        self.citing_url, '|',
+                        self.cited_url
+                        ])
 
     def hash(self):
         """
@@ -88,6 +84,9 @@ class Quote:
         hash_method = getattr(hashlib, HASH_ALGORITHM)
         hash_text = self.hashkey()
         return hash_method(hash_text.encode('utf-8')).hexdigest()
+
+    def cachehash(self):
+        return "quote_data_" + self.hash()
 
     def error(self):
         """
@@ -100,79 +99,87 @@ class Quote:
     def error_str(self):
         return self.data()['error']
 
-    @lru_cache(maxsize=8)
+    # @lru_cache(maxsize=8)
     def data(self, all_fields=True):
         """
             Calculate context of quotation using QuoteContext class
             Optionally return a smaller subset of fields to upload to cloud
         """
+        cached_data = cache.get(self.cachehash())
+        if cached_data:
+            print("Returning cached Quote Data: " + self.cited_url)
+            return cached_data
+        else:
+            print("Looking up data() for " + self.cited_url)
+            data_dict = {
+                'sha1': self.hash(),
+                'citing_url': self.citing_url,
+                'cited_url': self.cited_url,
+            }
 
-        data_dict = {
-            'sha1': self.hash(),
-            'citing_url': self.citing_url,
-            'cited_url': self.cited_url,
+            # Get text version of document if text not passed into object
+            citing_text = self.citing_text
+            citing_raw = self.citing_raw
+            if (len(citing_text) == 0) or (len(citing_raw) == 0):
+                citing_doc = Document(self.citing_url)
+                citing_text = citing_doc.data()['text']
+                citing_raw = citing_doc.data()['raw']
+            cited_doc = Document(self.cited_url)
+            cited_text = cited_doc.data()['text']
 
-        }
+            # if self.raw_output and citing_doc:
+            #    data_dict['citing_raw'] = citing_doc.raw()
+            #    data_dict['cited_raw'] = Document(self.cited_url)().raw()
 
-        # Get text version of document if text not passed into object
-        citing_text = self.citing_text
-        citing_raw = self.citing_raw
-        if (len(citing_text) == 0) or (len(citing_raw) == 0):
-            citing_doc = Document(self.citing_url)
-            citing_text = citing_doc.data()['text']
-            citing_raw = citing_doc.data()['raw']
-        cited_doc = Document(self.cited_url)
-        cited_text = cited_doc.data()['text']
+            data_dict['citing_text'] = citing_text
+            data_dict['cited_text'] = cited_text
+            # data_dict['citing_doc_type'] = citing_doc.data()['doc_type']
+            # data_dict['cited_doc_type'] = cited_doc.data()['doc_type']
 
-        # if self.raw_output and citing_doc:
-        #    data_dict['citing_raw'] = citing_doc.raw()
-        #    data_dict['cited_raw'] = Document(self.cited_url)().raw()
+            # Find context of quote from within text
+            citing_context = QuoteContext(self.citing_quote, citing_text)
+            cited_context = QuoteContext(self.citing_quote, cited_text)
 
-        data_dict['citing_text'] = citing_text
-        data_dict['cited_text'] = cited_text
-        # data_dict['citing_doc_type'] = citing_doc.data()['doc_type']
-        # data_dict['cited_doc_type'] = cited_doc.data()['doc_type']
+            # Populate context fields with Document methods
+            quote_context_fields = [
+                'context_before', 'context_after',  # 'quote',
+                'quote_length',
+                'quote',
+                'quote_start_position', 'quote_end_position',
+                'context_start_position', 'context_end_position',
+            ]
+            for field in quote_context_fields:
+                citing_field = ''.join(['citing_', field])
+                cited_field = ''.join(['cited_', field])
 
-        # Find context of quote from within text
-        citing_context = QuoteContext(self.citing_quote, citing_text)
-        cited_context = QuoteContext(self.citing_quote, cited_text)
+                data_dict[citing_field] = citing_context.data()[field]
+                data_dict[cited_field] = cited_context.data()[field]
 
-        # Populate context fields with Document methods
-        quote_context_fields = [
-            'context_before', 'context_after',  # 'quote',
-            'quote_length',
-            'quote',
-            'quote_start_position', 'quote_end_position',
-            'context_start_position', 'context_end_position',
-        ]
-        for field in quote_context_fields:
-            citing_field = ''.join(['citing_', field])
-            cited_field = ''.join(['cited_', field])
+            # Stop Elapsed Timer
+            elapsed_time = time.time() - self.start_time
+            data_dict['create_elapsed_time'] = format(elapsed_time, '.5f')
 
-            data_dict[citing_field] = citing_context.data()[field]
-            data_dict[cited_field] = cited_context.data()[field]
+            if not all_fields:
+                excluded_fields = [
+                    'cited_raw', 'citing_raw',
+                    'citing_text', 'cited_text',
+                    'citing_quote_length',
+                    'cited_quote_start_position',
+                    'citing_quote_start_position',
+                    'cited_quote_end_position',
+                    'citing_quote_end_position',
+                    'cited_context_start_position',
+                    'citing_context_start_position',
+                    'cited_context_end_position',
+                    'citing_context_end_position',
+                    'create_elapsed_time',
+                ]  # 'cited_cache_url', 'cited_archive_url',
 
-        # Stop Elapsed Timer
-        elapsed_time = time.time() - self.start_time
-        data_dict['create_elapsed_time'] = format(elapsed_time, '.5f')
+                for excluded_field in excluded_fields:
+                    data_dict.pop(excluded_field)
 
-        if not all_fields:
-            excluded_fields = [
-                'cited_raw', 'citing_raw',
-                'citing_text', 'cited_text',
-                'citing_quote_length',
-                'cited_quote_start_position', 'citing_quote_start_position',
-                'cited_quote_end_position', 'citing_quote_end_position',
-                'cited_context_start_position',
-                'citing_context_start_position',
-                'cited_context_end_position', 'citing_context_end_position',
-                'create_elapsed_time',
-            ]  # 'cited_cache_url', 'cited_archive_url',
-
-            for excluded_field in excluded_fields:
-                data_dict.pop(excluded_field)
-
-        return data_dict
+            cache.set(self.cachehash(), data_dict, 60)
+            return data_dict
 
 
 def html_to_text(html):
@@ -190,6 +197,7 @@ def convert_special_characters(content):
     for char in replacement_chars:
         content = content.replace('', "'")
     return content
+
 
 # Non-class functions ####
 def trim_encode(content):
