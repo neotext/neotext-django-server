@@ -247,7 +247,7 @@ class Quote(models.Model):
         return json_lib.dumps(json_fields)
 
     def save_json_locally(self):
-        with open(self.local_filename(), 'w') as f:
+        with open(self.local_filename(), 'w+') as f:
             f.write(self.json())
         print("Json saved locally ..")
 
@@ -255,11 +255,10 @@ class Quote(models.Model):
         """
             Upload json file to Amazon S3
         """
-        #import gevent.monkey
-        #gevent.monkey.patch_socket()
+        # import gevent.monkey
+        # gevent.monkey.patch_socket()
         print('Starting upload json to cloud: ' + self.local_filename())
-
-        f = open(self.local_filename(), 'rb')
+        f = open(self.local_filename(), 'rb')  # 'w+'
 
         # Divide into subdirectories like git:
         # http://www.quora.com/File-Systems-Why-does-git-shard-the-objects-folder-into-256-subfolders
