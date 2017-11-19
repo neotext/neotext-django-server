@@ -42,15 +42,17 @@ class Document:
     def url(self):
         return self.url
 
-    def hexkey(self):
+    def hex_key(self):
         url = self.url.encode('utf-8')
         key = base64.urlsafe_b64encode(hashlib.md5(url).digest())[:16]
         return key.decode('utf-8')
 
+    def cache_key(self):
+        return "document_" + self.hex_key()
+
     #  @lru_cache(maxsize=100)
     def raw(self):
-        cache_key = "raw_" + self.hexkey()
-        raw = cache.get(cache_key)
+        raw = cache.get(self.cache_key())
         if raw:
             print('Cache hit:' + self.url)
             return raw
@@ -59,21 +61,21 @@ class Document:
                 headers = {'user-agent': 'Mozilla/5.0 (Windows NT 6.0;'
                            ' WOW64; rv:24.0) Gecko/20100101 Firefox/24.0'}
                 r = requests.get(self.url, headers=headers)
+                print('Downloaded ' + self.cache_key())
                 raw = r.text
-                cache.set(cache_key, raw, 60)
-                print('Downloaded ' + self.url)
+                cache.set(self.cache_key(), raw, 60)
                 return raw
 
             except requests.HTTPError:
                 raw = "document: HTTPError"
-                cache.set(cache_key, raw, 20)
-                print("HTTPError: " + cache_key)
+                cache.set(self.cache_key(), raw, 20)
+                print("HTTPError: " + self.cache_key())
                 return raw
 
             except SSLError:
                 raw = "document: SSLError"
-                cache.set(cache_key, raw, 20)
-                print("SSLError: " + cache_key)
+                cache.set(self.cache_key(), raw, 20)
+                print("SSLError: " + self.cache_key())
                 return raw
 
     def doc_type(self):
@@ -96,19 +98,6 @@ class Document:
         if self.doc_type() == 'html':
             t = Text(self.raw())
             return t.text()
-
-            """
-            soup = BeautifulSoup(self.html(), "html.parser")
-            invisible_tags = ['style', 'script', '[document]', 'head', 'title']
-            for elem in soup.findAll(invisible_tags):
-                elem.extract()  # remove elements: javascript, css, etc
-            text = soup.get_text(separator=' ')
-
-            # Remove double spaces but retain line breaks
-            text = '\n'.join(
-                ' '.join(line.split()) for line in text.split('\n')
-            )
-            """
 
         elif self.doc_type == 'pdf':
             # use: https://github.com/euske/pdfminer/
