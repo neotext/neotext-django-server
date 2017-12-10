@@ -68,7 +68,7 @@ class Quote:
         self.after_quote_context_length = after_quote_context_length
         self.starting_location_guess = starting_location_guess
 
-    def hashkey(self):
+    def hash_key(self):
         """ The hash is based on a concatination of:
             citing_quote|citing_url|cited_url
         """
@@ -82,10 +82,10 @@ class Quote:
             Generate hash of the key, based on hash algorith (sha1)
         """
         hash_method = getattr(hashlib, HASH_ALGORITHM)
-        hash_text = self.hashkey()
+        hash_text = self.hash_key()
         return hash_method(hash_text.encode('utf-8')).hexdigest()
 
-    def cachehash(self):
+    def cache_key(self):
         return "quote_data_" + self.hash()
 
     def error(self):
@@ -99,13 +99,13 @@ class Quote:
     def error_str(self):
         return self.data()['error']
 
-    # @lru_cache(maxsize=8)
+    @lru_cache(maxsize=50)
     def data(self, all_fields=True):
         """
             Calculate context of quotation using QuoteContext class
             Optionally return a smaller subset of fields to upload to cloud
         """
-        cached_data = cache.get(self.cachehash())
+        cached_data = cache.get(self.cache_key())
         if cached_data:
             print("Returning cached Quote Data: " + self.cited_url)
             return cached_data
@@ -120,12 +120,15 @@ class Quote:
             # Get text version of document if text not passed into object
             citing_text = self.citing_text
             citing_raw = self.citing_raw
+            print("Populating Document: Doc, Text, Raw")
             if (len(citing_text) == 0) or (len(citing_raw) == 0):
                 citing_doc = Document(self.citing_url)
-                citing_text = citing_doc.data()['text']
-                citing_raw = citing_doc.data()['raw']
+                citing_text = citing_doc.text()
+                citing_raw = citing_doc.raw()
             cited_doc = Document(self.cited_url)
-            cited_text = cited_doc.data()['text']
+            print("3)----data()['text']-----")
+            cited_text = cited_doc.text()
+            print("End Populating")
 
             # if self.raw_output and citing_doc:
             #    data_dict['citing_raw'] = citing_doc.raw()
@@ -178,7 +181,7 @@ class Quote:
                 for excluded_field in excluded_fields:
                     data_dict.pop(excluded_field)
 
-            cache.set(self.cachehash(), data_dict, 60)
+            cache.set(self.cache_key(), data_dict, 60)
             return data_dict
 
 

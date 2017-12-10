@@ -48,35 +48,43 @@ class Document:
         return key.decode('utf-8')
 
     def cache_key(self):
-        return "document_" + self.hex_key()
+        return "doc_" + self.hex_key()
 
-    #  @lru_cache(maxsize=100)
     def raw(self):
-        raw = cache.get(self.cache_key())
-        if raw:
-            print('Cache hit:' + self.url)
-            return raw
+        cache_key = self.cache_key()
+        print("Cache_key:" + self.cache_key())
+        print('  Get Cache: ' + cache_key)
+        raw_string = cache.get(cache_key)
+        print('  Cache Result: ')
+        if raw_string:
+            print('       Cache hit:' + self.url)
+            return raw_string
         else:
+            print("MISS: ")
             try:
                 headers = {'user-agent': 'Mozilla/5.0 (Windows NT 6.0;'
                            ' WOW64; rv:24.0) Gecko/20100101 Firefox/24.0'}
                 r = requests.get(self.url, headers=headers)
-                print('Downloaded ' + self.cache_key())
-                raw = r.text
-                cache.set(self.cache_key(), raw, 60)
-                return raw
+                print('Downloaded ' + cache_key)
+                cache.set(cache_key, r.text, 60)
+                print('Raw Length: ' + str(len(r.text)))
+                return r.text
 
             except requests.HTTPError:
-                raw = "document: HTTPError"
-                cache.set(self.cache_key(), raw, 20)
-                print("HTTPError: " + self.cache_key())
-                return raw
+                raw_string = "document: HTTPError"
+                cache.set(self.cache_key(), raw_string, 20)
+                print("HTTPError: " + cache_key)
+                return raw_string
 
             except SSLError:
-                raw = "document: SSLError"
-                cache.set(self.cache_key(), raw, 20)
-                print("SSLError: " + self.cache_key())
-                return raw
+                raw_string = "document: SSLError"
+                cache.set(self.cache_key(), raw_string, 20)
+                print("SSLError: " + cache_key)
+                return raw_string
+
+            else:
+                raw_string = "document: ExceptElse"
+                print("ExceptElse:" + cache_key)
 
     def doc_type(self):
         """ Todo: Distinguish between html, text, .doc, and pdf"""
@@ -92,7 +100,6 @@ class Document:
             html = self.raw()
         return html
 
-    @lru_cache(maxsize=8)
     def text(self):
         """convert html to plaintext"""
         if self.doc_type() == 'html':
@@ -100,11 +107,11 @@ class Document:
             return t.text()
 
         elif self.doc_type == 'pdf':
-            # use: https://github.com/euske/pdfminer/
+            # perhaps use: https://github.com/euske/pdfminer/
             return "not implemented"
 
         elif self.doc_type == 'doc':
-            # https://github.com/deanmalmgren/textract
+            # perhaps use: https://github.com/deanmalmgren/textract
             return "not implemented"
 
         elif self.doc_type == 'text':

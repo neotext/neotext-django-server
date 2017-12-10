@@ -36,9 +36,12 @@ class URL:
         return self.url
 
     # Document methods imported here so class can make only 1 request per URL
+    @lru_cache(maxsize=50)
     def doc(self):
+        print("URL: Document(self.url)")
         return Document(self.url)
 
+    @lru_cache(maxsize=50)
     def raw(self):
         return self.doc().raw()
 
@@ -51,8 +54,9 @@ class URL:
             html = self.raw()
         return html
 
-    @lru_cache(maxsize=25)
+    @lru_cache(maxsize=50)
     def text(self):
+        print("URL: text(self)")
         return self.doc().text()
 
     def citation_urls(self):
