@@ -1,18 +1,15 @@
 from neotext.lib.neotext_quote_context.quote import Quote
 
 t0 = Quote(
-    citing_quote="""
-<p>I am sick and tired of watching folks like Boris Johnson, Marine Le Pen, Donald Trump and others appeal to the worst racial instincts of our species, only to be shushed by folks telling me that it&#8217;s not <i>really</i> racism driving their popularity. It&#8217;s economic angst. It&#8217;s regular folks tired of being spurned by out-of-touch elites. It&#8217;s a natural anxiety over rapid cultural change.</p>
+    citing_quote="""<p>I am sick and tired of watching folks like Boris Johnson, Marine Le Pen, Donald Trump and others appeal to the worst racial instincts of our species, only to be shushed by folks telling me that it&#8217;s not <i>really</i> racism driving their popularity. It&#8217;s economic angst. It&#8217;s regular folks tired of being spurned by out-of-touch elites. It&#8217;s a natural anxiety over rapid cultural change.</p>
 
-<p>Maybe it&#8217;s all those things. But at its core, it&#8217;s the last stand of old people who have been frightened to death by cynical right-wing media empires and the demagogues who enable them—all of whom have based their appeals on racism as overt as anything we&#8217;ve seen in decades. It&#8217;s loathsome beyond belief, and not something I thought I&#8217;d ever see in my lifetime. But that&#8217;s where we are.</p>
-""",
+<p>Maybe it&#8217;s all those things. But at its core, it&#8217;s the last stand of old people who have been frightened to death by cynical right-wing media empires and the demagogues who enable them—all of whom have based their appeals on racism as overt as anything we&#8217;ve seen in decades. It&#8217;s loathsome beyond belief, and not something I thought I&#8217;d ever see in my lifetime. But that&#8217;s where we are.</p>""",
     citing_url='http://www.neotext.net/www.interfluidity.com/v2/6602.html',
     cited_url='http://www.motherjones.com/kevin-drum/2016/06/brexit-wins'
 )
 t0.hashkey()
 t0.hash()
 
-# 8ea0074c85a17bb4f0e9efda5d07dd35d9ea3c6a
 
 from neotext.lib.neotext_quote_context.quote import Quote
 t2 = Quote(
