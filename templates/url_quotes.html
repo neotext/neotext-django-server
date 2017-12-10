@@ -1,37 +1,112 @@
 {% extends 'base.html' %}
 {% load neotext_filters %}
-{% block title %}Neotext.net : {% endblock %}
+{% block title %}Citations of {{url}} : CiteIt.org{% endblock %}
 
 {% block breadcrumbs %}
-   <a href="/url/">url</a> &gt; <a href="www.openpolitics.com/2016/05/13/ted-nelson-philosophy-of-hypertext/">
-     www.openpolitics.com</a>
+   <a rel="nofollow" href="../cited-by{{url|get_url_path}}">cited by</a> :
+   <a rel="nofollow" href="{{url|get_url_domain}}">{{url|get_url_domain}}</a><br />
+{% endblock %}
+
+{% block breadcrumbs_sub %}
+   page : <a rel="nofollow" href="{{url}}">{{url|get_url_path}}</a><br />
 {% endblock %}
 
 {% block content %}
 
   {% if url %}
 
-    {% for quote in quotes %}
+  <h3 class="num_quotes">{{ quotes | length }} Quotes found</h3>
+  {% for quote in quotes %}
+    <div class="quote">
+      <!-- Heading -->
+      <table class="quote_source">
+        <tr>
+          <td>
+            <h3>Original Source:<h3>
+                <h4><a rel="nofollow" href="{{quote.cited_url}}">{{quote.cited_url|get_url_domain}}</a></h4>
+            </h3>
+          </td>
+          <td>
+            <h3>Cited By:</h3>
+                <h4><a rel="nofollow" href="{{quote.citing_url}}">{{quote.citing_url|get_url_domain}}</a></h4>
+            </h3>
+          </td>
+      </table>
 
-      <div class="cited_before"><h3>Source:
-        <a href="{{quote.cited_url}}">{{quote.cited_url|get_url_domain}}</a></h3>
-        {{ quote.cited_context_before }}
-      </div>
-      <div class="citing_before"><h3>Source:
-        <a href="{{quote.citing_url}}">{{quote.citing_url|get_url_domain}}</a></h3>
-        {{ quote.citing_context_before }}
+      <!-- Top Arrows -->
+      <div class="quote_arrows" id="context_up_{{quote.sha1}}">
+        <a rel="nofollow" href="javascript:toggle_quote('before', 'quote_before_{{quote.sha1}}');">▲</a>
       </div>
 
-      <blockquote>{{ quote.citing_quote }}
-        <a href="{{ quote.cited_url }}"></a>
+      <!--Before-->
+      <div id="quote_before_{{quote.sha1}}" class="quote_context">
+        <div class="cited_before">{{ quote.cited_context_before}}</div>
+        <div class="citing_before">{{ quote.citing_context_before}}</div>
+      </div>
+
+      <!-- Quote -->
+      <blockquote id="quote_{{quote.sha1}}">{{ quote.citing_quote }}
+        <a rel="nofollow" href="{{ quote.cited_url }}"></a>
       </blockquote>
-      <div class="cited_after">{{ quote.cited_context_after}}</div>
-      <div class="citing_after">{{ quote.citing_context_after}}</div>
+
+      <!--After-->
+      <div id="quote_after_{{quote.sha1}}" class="quote_context">
+        <div class="cited_after">{{ quote.cited_context_after}}</div>
+        <div class="citing_after">{{ quote.citing_context_after}}</div>
+      </div>
+
+      <!-- Bottom Arrows -->
+      <div class="quote_arrows" id="context_down_{{quote.sha1}}">
+        <a href="javascript:toggle_quote('after', 'quote_after_{{quote.sha1}}');">▼</a>
+      </div>
+
+
+    </div>
     {% endfor %}
 
   {% else %}
     No citations found
 
   {% endif %}
+
+
+<style>
+  div.quote {
+    border: 1px solid #ddd;
+    margin-bottom: 3%;
+    background-color: #eee;
+    padding: 2%;
+  }
+  span.page {
+    font-size: 90%;
+  }
+  div.quote_context {
+    display: none;
+  }
+  div.cited_before {
+    width: 600px;
+  }
+  div.cited_before, div.citing_before {
+    height: 70px;
+    width: 250px
+  }
+  h3.quote_source {
+    margin-top: 5%;
+  }
+  h3.num_quotes {
+    margin-top: 5%;
+    margin-bottom: 7%;
+  }
+  table.quote_source {
+    border: 2px solid #eee;
+    margin-bottom: 2%;
+    padding:5px;
+    margin: 3px;
+  }
+  blockquote {
+    margin: 3% 0 3% 3%;
+  }
+</style>
+<link rel="stylesheet" id="neotext_quote_context_css-css" href="https://www.neotext.net/wp-content/plugins/neotext/css/quote-context-style.css">
 
 {% endblock %}

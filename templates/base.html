@@ -104,7 +104,7 @@
 	<header class="site-header" role="banner" itemscope="itemscope" itemtype="http://schema.org/WPHeader">
 		<div class="wrap">
 		<div class="title-area">
-			<h1 class="site-title" itemprop="headline"><a href="http://www.neotext.net/">neotext.net</a></h1>
+			<h1 class="site-title" itemprop="headline"><a href="http://www.neotext.net/">citeit.org</a></h1>
 		</div>
 		</div>
 	</header>
@@ -112,7 +112,7 @@
 	<div class="site-tagline">
 		<div class="wrap">
 			<div class="site-tagline-left">
-				<p class="site-description" itemprop="description">advancing the evolution of text</p>
+				<p class="site-description" itemprop="description">a citation tool for web authors</p>
 			</div>
 		<div class="site-tagline-right">
 	</div>
@@ -134,6 +134,7 @@
 
 	<header class="entry-header">
 		<h1 class="entry-title" itemprop="headline">{% block breadcrumbs %}{% endblock %}</h1>
+    {% block breadcrumbs_sub %}{% endblock breadcrumbs_sub %}
 	</header>
 
 	<div class="entry-content" itemprop="text">

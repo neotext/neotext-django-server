@@ -47,8 +47,8 @@ def index(request):
         You're at the neotext webservice homepage.")
 
 def url_quotes(request, url):
-    url = 'http://www.openpolitics.com/2016/05/13/ted-nelson-philosophy-of-hypertext/'
-    quotes = Quote.objects.filter(cited_url=url)
+    url = 'http://www.openpolitics.com/articles/the-webs-original-design-1965-would-have-exposed-fake-news-better.html'
+    quotes = Quote.objects.filter(citing_url=url)
 
     template = get_template('url_quotes.html')
     context = Context({
