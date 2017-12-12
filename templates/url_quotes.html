@@ -3,19 +3,21 @@
 {% block title %}Citations of {{url}} : CiteIt.org{% endblock %}
 
 {% block breadcrumbs %}
-   <a rel="nofollow" href="../cited-by{{url|get_url_path}}">cited by</a> :
-   <a rel="nofollow" href="{{url|get_url_domain}}">{{url|get_url_domain}}</a><br />
+   <a rel="nofollow" href="/cited-by/url/{{url|get_url_domain}}{{url|get_url_path}}">Cited by</a> :
+   <a rel="nofollow" href="/cited-by/domain/{{url|get_url_domain}}">{{url|get_url_domain}}</a><br />
 {% endblock %}
 
 {% block breadcrumbs_sub %}
+  <div class="breadcrumbs_sub">
    page : <a rel="nofollow" href="{{url}}">{{url|get_url_path}}</a><br />
+ </div>
 {% endblock %}
 
 {% block content %}
 
   {% if url %}
 
-  <h3 class="num_quotes">{{ quotes | length }} Quotes found</h3>
+  <h3 class="num_quotes">{{ quotes | length }} Citations found</h3>
   {% for quote in quotes %}
     <div class="quote">
       <!-- Heading -->
@@ -72,19 +74,19 @@
 
 <style>
   div.quote {
-    border: 1px solid #ddd;
+    border: 1px solid #eee;
     margin-bottom: 3%;
-    background-color: #eee;
+    background-color: #f5f5f5;
     padding: 2%;
   }
   span.page {
     font-size: 90%;
   }
-  div.quote_context {
-    display: none;
-  }
   div.cited_before {
     width: 600px;
+  }
+  div.quote_context {
+    display: none;
   }
   div.cited_before, div.citing_before {
     height: 70px;
@@ -98,13 +100,16 @@
     margin-bottom: 7%;
   }
   table.quote_source {
-    border: 2px solid #eee;
+    border: 2px solid #f5f5f5;
     margin-bottom: 2%;
     padding:5px;
     margin: 3px;
   }
   blockquote {
     margin: 3% 0 3% 3%;
+  }
+  div.breadcrumbs_sub, div.breadcrumbs_sub a {
+    color: #666;
   }
 </style>
 <link rel="stylesheet" id="neotext_quote_context_css-css" href="https://www.neotext.net/wp-content/plugins/neotext/css/quote-context-style.css">

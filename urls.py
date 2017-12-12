@@ -25,7 +25,7 @@ urlpatterns = [
     url(r'^post/', views.index, name='index'),
     url(r'^html2text/', views.html2text, name='html2text'),
     url(r'^$', views.post_url, name='post_url'),
-    url(r'^$cited-by/url/(?P<url>\d+)/$', views.url_quotes, name='url_quotes'),
+    url(r'^cited-by/url/(?P<url>\d+)/$', views.url_quotes, name='url_quotes'),
     url(r'^cited-by/url/(?P<url>(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)$',
         views.url_quotes, name='url_quotes'),
     url(r'^quote/sha1/(?P<sha1>[a-fA-F\d]{40})$',

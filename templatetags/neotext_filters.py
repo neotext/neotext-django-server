@@ -7,7 +7,7 @@ register = template.Library()
 @register.filter(name='get_url_domain')
 def get_url_domain(url):
     u = urlparse(url)
-    return 'test-domain.com'  #u.netloc
+    return u.netloc
 
 
 @register.filter(name='get_url_path')
