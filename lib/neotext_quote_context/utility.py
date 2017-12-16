@@ -21,7 +21,8 @@ class Text:
         self.input = string
 
     def __str__(self):
-        return self.normalize()
+        replace_chars_array = ['\n', ' ', '&nbsp'];
+        return self.normalize(replace_chars_array, '-')
 
     def text(self):
         soup = BeautifulSoup(self.input, "html.parser")
@@ -41,19 +42,32 @@ class Text:
         """
         return text
 
-    def normalize(self, replacement_chars=''):
-        replace_text = ['\n', '’', ',', '.' , '-', ':', '/', '!', '`', '~', '^',
-			' ', '&nbsp', '\xa0', '&#8217;', '&#169;', '&copy;', '&#174;',
-			'&reg;', '&#8364;', '&euro;', '&#8482;', '&trade;',
-			'&lsquo;', '&rsquo;', '&sbquo;', '&ldquo;', '&rdquo;', '&bdquo;',
-			'&#34;', '&quot;', '&#38;', '&amp;', '&#39;', '&#163;', '&pound;',
-			'&#165;', '&yen;', '&#168;', '&uml;', '&die;', '&#169;', '&copy;'
-        ]
-        content = self.text()
-        for txt in replace_text:
+    def normalize(self, replace_chars_array=[], replacement_chars='', isURL=False):
+        """Replace the following characters and trim the string:
+            This process is used when hashing text to eliminate any minor
+            inconsistencies which would throw off the hash values.
+        """
+        if ((not replace_chars_array) or (len(replace_chars_array) == 0)):
+            # Default characters to replace
+             replace_chars_array = [
+                '\n', '’', ',', '.' , '-', ':', '/', '!', '`', '~', '^',
+    			' ', '&nbsp', '\xa0', '&#8217;', '&#169;', '&copy;', '&#174;',
+    			'&reg;', '&#8364;', '&euro;', '&#8482;', '&trade;',
+    			'&lsquo;', '&rsquo;', '&sbquo;', '&ldquo;', '&rdquo;', '&bdquo;',
+    			'&#34;', '&quot;', '&#38;', '&amp;', '&#39;', '&#163;', '&pound;',
+    			'&#165;', '&yen;', '&#168;', '&uml;', '&die;', '&#169;', '&copy;'
+            ]
+        if isURL:
+            content = self.input
+        else:
+            content = self.text()
+
+        for txt in replace_chars_array:
             content = content.replace(txt, replacement_chars)
         return content
 
     def escape_url(self):
-        # Remove leading and trailing whitespace
-        return self.input.strip()
+      isURL = True
+      replace_chars_array = ['\n', ' ', '&nbsp'];
+      str = self.input.strip(); 	# remove whitespace at beginning and end
+      return self.normalize(replace_chars_array, '', isURL);
