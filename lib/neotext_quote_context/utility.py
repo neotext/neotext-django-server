@@ -41,11 +41,19 @@ class Text:
         """
         return text
 
-    def normalize(self, replace_chars=''):
+    def normalize(self, replacement_chars=''):
         replace_text = ['\n', '’', ',', '.' , '-', ':', '/', '!', '`', '~', '^',
-            ' ', '&nbsp', '\xa0'
+			' ', '&nbsp', '\xa0', '&#8217;', '&#169;', '&copy;', '&#174;',
+			'&reg;', '&#8364;', '&euro;', '&#8482;', '&trade;',
+			'&lsquo;', '&rsquo;', '&sbquo;', '&ldquo;', '&rdquo;', '&bdquo;',
+			'&#34;', '&quot;', '&#38;', '&amp;', '&#39;', '&#163;', '&pound;',
+			'&#165;', '&yen;', '&#168;', '&uml;', '&die;', '&#169;', '&copy;'
         ]
         content = self.text()
         for txt in replace_text:
-            content = content.replace(txt, replace_chars)
+            content = content.replace(txt, replacement_chars)
         return content
+
+    def escape_url(self):
+        # Remove leading and trailing whitespace
+        return self.input.strip()

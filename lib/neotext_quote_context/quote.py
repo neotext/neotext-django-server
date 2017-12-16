@@ -73,8 +73,8 @@ class Quote:
             citing_quote|citing_url|cited_url
         """
         return ''.join([Text(self.citing_quote).normalize(''), '|',
-                        self.citing_url, '|',
-                        self.cited_url
+                        Text(self.citing_url).escape_url(), '|',
+                        Text(self.cited_url).escape_url()
                         ])
 
     def hash(self):
