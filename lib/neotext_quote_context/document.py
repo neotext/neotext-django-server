@@ -50,6 +50,7 @@ class Document:
     def cache_key(self):
         return "doc_" + self.hex_key()
 
+    @lru_cache(maxsize=20)
     def raw(self):
         cache_key = self.cache_key()
         print("Cache_key:" + self.cache_key())
