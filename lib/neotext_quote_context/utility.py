@@ -9,6 +9,7 @@
 # http://www.opensource.org/licenses/mit-license
 
 from bs4 import BeautifulSoup
+from functools import lru_cache
 
 
 class Text:
@@ -24,6 +25,7 @@ class Text:
         replace_chars_array = ['\n', ' ', '&nbsp'];
         return self.normalize(replace_chars_array, '-')
 
+    @lru_cache(maxsize=20)
     def text(self):
         soup = BeautifulSoup(self.input, "html.parser")
         invisible_tags = ['style', 'script', '[document]', 'head', 'title']

@@ -122,26 +122,25 @@ class Quote:
             citing_raw = self.citing_raw
             print("Populating Document: Doc, Text, Raw")
             if (len(citing_text) == 0) or (len(citing_raw) == 0):
-                citing_doc = Document(self.citing_url)
-                citing_text = citing_doc.text()
-                citing_raw = citing_doc.raw()
+                citing_text = self.citing_text
+                citing_raw = self.citing_raw
             cited_doc = Document(self.cited_url)
             print("3)----data()['text']-----")
             cited_text = cited_doc.text()
             print("End Populating")
 
-            # if self.raw_output and citing_doc:
-            #    data_dict['citing_raw'] = citing_doc.raw()
-            #    data_dict['cited_raw'] = Document(self.cited_url)().raw()
-
             data_dict['citing_text'] = citing_text
             data_dict['cited_text'] = cited_text
-            # data_dict['citing_doc_type'] = citing_doc.data()['doc_type']
-            # data_dict['cited_doc_type'] = cited_doc.data()['doc_type']
 
             # Find context of quote from within text
-            citing_context = QuoteContext(self.citing_quote, citing_text)
-            cited_context = QuoteContext(self.citing_quote, cited_text)
+            citing_context_data = QuoteContext(
+                    self.citing_quote,
+                    citing_text
+            ).data()
+            cited_context_data = QuoteContext(
+                    self.citing_quote,
+                    cited_text
+            ).data()
 
             # Populate context fields with Document methods
             quote_context_fields = [
@@ -155,8 +154,8 @@ class Quote:
                 citing_field = ''.join(['citing_', field])
                 cited_field = ''.join(['cited_', field])
 
-                data_dict[citing_field] = citing_context.data()[field]
-                data_dict[cited_field] = cited_context.data()[field]
+                data_dict[citing_field] = citing_context_data[field]
+                data_dict[cited_field] = cited_context_data[field]
 
             # Stop Elapsed Timer
             elapsed_time = time.time() - self.start_time

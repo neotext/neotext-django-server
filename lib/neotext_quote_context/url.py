@@ -15,6 +15,7 @@ from neotext.lib.neotext_quote_context.document import Document
 from bs4 import BeautifulSoup
 from neotext.settings import NUM_DOWNLOAD_PROCESSES
 from multiprocessing import Pool
+from django.core.cache import cache
 from functools import lru_cache
 import time
 
@@ -38,8 +39,15 @@ class URL:
     # Document methods imported here so class can make only 1 request per URL
     @lru_cache(maxsize=50)
     def doc(self):
-        print("URL: Document(self.url)")
-        return Document(self.url)
+        cache_key = "url_" + self.url
+        cache_doc = cache.get(cache_key)
+        if cache_doc:
+            print("Cache hit: URL: " + self.url)
+            doc = cache_doc
+        else:
+            doc = Document(self.url)
+            cache.set(cache_key, doc, 60)
+        return doc
 
     @lru_cache(maxsize=50)
     def raw(self):
